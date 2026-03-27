@@ -6,6 +6,7 @@ const path = require("path");
 const http = require("http");
 const { initWebSocket } = require("./websocket");
 
+const { authMiddleware } = require("./auth");
 const sessionsRouter = require("./routes/sessions");
 const agentsRouter = require("./routes/agents");
 const eventsRouter = require("./routes/events");
@@ -21,6 +22,7 @@ function createApp() {
 
   app.use(cors());
   app.use(express.json({ limit: "1mb" }));
+  app.use(authMiddleware);
 
   app.use("/api/sessions", sessionsRouter);
   app.use("/api/agents", agentsRouter);

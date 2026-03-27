@@ -7,3 +7,7 @@ client/tsconfig.tsbuildinfo
 *.db-shm
 .env
 .vs/
+
+.env
+.env.local
+data/
