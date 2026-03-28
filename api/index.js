@@ -52,10 +52,19 @@ app.post("/api/hooks/event", hookAuthMiddleware, async (req, res) => {
       await neonDb.updateAgent(null, "working", null, toolName, null, null, agentId).catch(() => {});
     } else if (hook_type === "PostToolUse") {
       await neonDb.updateAgent(null, "idle", null, null, null, null, agentId).catch(() => {});
-    } else if (hook_type === "Stop" || hook_type === "SessionEnd") {
+    } else if (hook_type === "Stop") {
+      // Stop = Claude finished its turn, agent goes idle (not completed)
+      await neonDb.updateAgent(null, "idle", null, null, null, null, agentId).catch(() => {});
+    } else if (hook_type === "SessionEnd") {
       await neonDb.updateSession(null, "completed", new Date().toISOString(), null, sessionId);
       await neonDb.updateAgent(null, "completed", null, null, new Date().toISOString(), null, agentId).catch(() => {});
+    } else if (hook_type === "TeammateIdle") {
+      // Teammate finished work, waiting for new tasks
+      await neonDb.updateAgent(null, "idle", null, null, null, null, agentId).catch(() => {});
+    } else if (hook_type === "SubagentStop") {
+      await neonDb.updateAgent(null, "completed", null, null, new Date().toISOString(), null, agentId).catch(() => {});
     }
+    // TaskCreated and TaskCompleted are recorded as events (already inserted above)
 
     if (data?.usage) {
       const u = data.usage;
