@@ -14,12 +14,14 @@ import {
   Globe,
   PanelLeftClose,
   PanelLeftOpen,
+  Hexagon,
 } from "lucide-react";
 
 const NAV_ITEMS = [
   { to: "/", icon: LayoutDashboard, label: "Dashboard" },
   { to: "/kanban", icon: Columns3, label: "Agent Board" },
   { to: "/agents", icon: Users, label: "Agent Fleet" },
+  { to: "/grid", icon: Hexagon, label: "Agent Grid 3D" },
   { to: "/sessions", icon: FolderOpen, label: "Sessions" },
   { to: "/activity", icon: Activity, label: "Activity Feed" },
   { to: "/analytics", icon: BarChart3, label: "Analytics" },

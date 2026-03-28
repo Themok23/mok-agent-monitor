@@ -10,6 +10,8 @@ import { ActivityFeed } from "./pages/ActivityFeed";
 import { Analytics } from "./pages/Analytics";
 import { Workflows } from "./pages/Workflows";
 import { Settings } from "./pages/Settings";
+import { lazy, Suspense } from "react";
+const AgentGrid = lazy(() => import("./pages/AgentGrid").then(m => ({ default: m.AgentGrid })));
 import { NotFound } from "./pages/NotFound";
 import { useWebSocket } from "./hooks/useWebSocket";
 import { useNotifications } from "./hooks/useNotifications";
@@ -36,6 +38,7 @@ export default function App() {
           <Route path="activity" element={<ActivityFeed />} />
           <Route path="analytics" element={<Analytics />} />
           <Route path="workflows" element={<Workflows />} />
+          <Route path="grid" element={<Suspense fallback={<div className="flex items-center justify-center h-full text-cyan-400"><span style={{fontFamily:"Orbitron"}}>Loading 3D Grid...</span></div>}><AgentGrid /></Suspense>} />
           <Route path="settings" element={<Settings />} />
           <Route path="*" element={<NotFound />} />
         </Route>

@@ -293,6 +293,39 @@ const processEvent = db.transaction((hookType, data) => {
       break;
     }
 
+    case "TeammateIdle": {
+      // A teammate finished its turn and is waiting for work
+      const teammateName = data.teammate_name || data.agent_type || "Teammate";
+      summary = `Teammate idle: ${teammateName}`;
+
+      // Update agent status to idle if we can match it
+      const idleSubagents = stmts.listAgentsBySession.all(sessionId);
+      const idleTeammate = idleSubagents.find(
+        (a) => a.type === "subagent" && a.status === "working" &&
+          (data.agent_type ? a.subagent_type === data.agent_type : true)
+      );
+      if (idleTeammate) {
+        stmts.updateAgent.run(null, "idle", null, null, null, null, idleTeammate.id);
+        broadcast("agent_updated", stmts.getAgent.get(idleTeammate.id));
+        agentId = idleTeammate.id;
+      }
+      break;
+    }
+
+    case "TaskCreated": {
+      const taskTitle = data.title || data.task_name || data.description || "New task";
+      summary = `Task created: ${taskTitle.slice(0, 80)}`;
+      eventType = "TaskCreated";
+      break;
+    }
+
+    case "TaskCompleted": {
+      const completedTitle = data.title || data.task_name || data.description || "Task";
+      summary = `Task completed: ${completedTitle.slice(0, 80)}`;
+      eventType = "TaskCompleted";
+      break;
+    }
+
     default: {
       summary = `Event: ${hookType}`;
     }
