@@ -88,7 +88,7 @@ export function SessionDetail() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64 text-gray-500">Loading session...</div>
+      <div className="flex items-center justify-center h-64 text-white0/40">Loading session...</div>
     );
   }
 
@@ -107,33 +107,33 @@ export function SessionDetail() {
     <div className="animate-fade-in space-y-8">
       {/* Header */}
       <div className="flex items-start gap-4">
-        <button onClick={() => navigate("/sessions")} className="btn-ghost mt-1">
+        <button onClick={() => navigate("/sessions")} className="btn-ghost mt-1 text-cyan-400 hover:text-cyan-300">
           <ArrowLeft className="w-4 h-4" />
         </button>
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-2">
-            <h2 className="text-xl font-semibold text-gray-100">
+            <h2 className="text-xl font-semibold text-cyan-400" style={{ fontFamily: "'Orbitron', sans-serif" }}>
               {session.name || `Session ${session.id.slice(0, 8)}`}
             </h2>
             <SessionStatusBadge status={session.status as SessionStatus} />
           </div>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1">
-            <span className="inline-flex items-center gap-1.5 text-xs text-gray-500 font-mono bg-surface-2 px-2 py-1 rounded">
+            <span className="inline-flex items-center gap-1.5 text-xs text-white0/40 font-mono bg-surface-2 px-2 py-1 rounded">
               {session.id.slice(0, 16)}
             </span>
             {session.model && (
-              <span className="inline-flex items-center gap-1.5 text-xs text-gray-400 bg-surface-2 px-2 py-1 rounded">
-                <Cpu className="w-3 h-3 text-gray-500" />
+              <span className="inline-flex items-center gap-1.5 text-xs text-white/90 bg-surface-2 px-2 py-1 rounded">
+                <Cpu className="w-3 h-3 text-white0/40" />
                 {session.model}
               </span>
             )}
-            <span className="inline-flex items-center gap-1.5 text-xs text-gray-400 bg-surface-2 px-2 py-1 rounded">
-              <Clock className="w-3 h-3 text-gray-500" />
+            <span className="inline-flex items-center gap-1.5 text-xs text-white/90 bg-surface-2 px-2 py-1 rounded">
+              <Clock className="w-3 h-3 text-white0/40" />
               {events.length > 0 && events[0]
                 ? formatDateTime(events[0].created_at)
                 : formatDateTime(session.started_at)}
               {session.ended_at && (
-                <span className="text-gray-500 ml-1">
+                <span className="text-white0/40 ml-1">
                   ({formatDuration(session.started_at, session.ended_at)})
                 </span>
               )}
@@ -146,25 +146,25 @@ export function SessionDetail() {
             )}
           </div>
           {session.cwd && (
-            <div className="flex items-center gap-1.5 text-xs text-gray-500 mt-2">
+            <div className="flex items-center gap-1.5 text-xs text-white0/40 mt-2">
               <FolderOpen className="w-3 h-3 flex-shrink-0" />
               <span className="font-mono truncate">{session.cwd}</span>
             </div>
           )}
         </div>
-        <button onClick={load} className="btn-ghost">
+        <button onClick={load} className="btn-ghost text-cyan-400 hover:text-cyan-300">
           <RefreshCw className="w-4 h-4" />
         </button>
       </div>
 
       {/* Agents */}
       <div>
-        <h3 className="text-sm font-medium text-gray-300 mb-4 flex items-center gap-2">
+        <h3 className="text-sm font-medium text-cyan-300 mb-4 flex items-center gap-2">
           <Bot className="w-4 h-4" />
           Agents ({agents.length})
         </h3>
         {agents.length === 0 ? (
-          <p className="text-sm text-gray-500">No agents recorded.</p>
+          <p className="text-sm text-white0/40">No agents recorded.</p>
         ) : (
           <div className="space-y-2">
             {(() => {
@@ -205,7 +205,7 @@ export function SessionDetail() {
                                   return next;
                                 })
                               }
-                              className="p-1 text-gray-500 hover:text-gray-300 transition-colors flex-shrink-0"
+                              className="p-1 text-white0/40 hover:text-cyan-300 transition-colors flex-shrink-0"
                             >
                               {isExpanded ? (
                                 <ChevronDown className="w-4 h-4" />
@@ -221,10 +221,10 @@ export function SessionDetail() {
 
                         {/* Subagent children (collapsible) */}
                         {hasChildren && isExpanded && (
-                          <div className="ml-6 mt-1 space-y-1 border-l-2 border-violet-500/20 pl-3">
+                          <div className="ml-6 mt-1 space-y-1 border-l-2 border-cyan-500/20 pl-3">
                             {children.map((sub) => (
                               <div key={sub.id} className="flex items-center gap-2">
-                                <GitBranch className="w-3 h-3 text-violet-400 flex-shrink-0" />
+                                <GitBranch className="w-3 h-3 text-cyan-400 flex-shrink-0" />
                                 <div className="flex-1">
                                   <AgentCard agent={sub} />
                                 </div>
@@ -237,7 +237,7 @@ export function SessionDetail() {
                         {hasChildren && !isExpanded && (
                           <button
                             onClick={() => setExpandedAgents((prev) => new Set([...prev, main.id]))}
-                            className="ml-7 mt-1 text-[11px] text-violet-400 hover:text-violet-300 transition-colors"
+                            className="ml-7 mt-1 text-[11px] text-cyan-400 hover:text-cyan-300 transition-colors"
                           >
                             {children.length} subagent{children.length !== 1 ? "s" : ""}
                           </button>
@@ -249,7 +249,7 @@ export function SessionDetail() {
                   {/* Orphaned subagents */}
                   {orphans.length > 0 && (
                     <div className="mt-4">
-                      <p className="text-[11px] text-gray-500 mb-2 uppercase tracking-wider">
+                      <p className="text-[11px] text-white0/40 mb-2 uppercase tracking-wider">
                         Unparented Subagents
                       </p>
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -269,48 +269,48 @@ export function SessionDetail() {
       {/* Cost Breakdown */}
       {cost && cost.breakdown.length > 0 && cost.total_cost > 0 && (
         <div>
-          <h3 className="text-sm font-medium text-gray-300 mb-4 flex items-center gap-2">
+          <h3 className="text-sm font-medium text-cyan-300 mb-4 flex items-center gap-2">
             <DollarSign className="w-4 h-4" />
             Cost Breakdown
           </h3>
           <div className="card overflow-x-auto">
             <table className="w-full min-w-[600px]">
               <thead>
-                <tr className="border-b border-border text-left">
-                  <th className="px-5 py-2.5 text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
+                <tr className="border-b border-cyan-500/10 text-left">
+                  <th className="px-5 py-2.5 text-[11px] font-semibold text-white0/60 uppercase tracking-wider" style={{ fontFamily: "'Orbitron', sans-serif" }}>
                     Model
                   </th>
-                  <th className="px-5 py-2.5 text-[11px] font-semibold text-gray-500 uppercase tracking-wider text-right">
+                  <th className="px-5 py-2.5 text-[11px] font-semibold text-white0/60 uppercase tracking-wider text-right" style={{ fontFamily: "'Orbitron', sans-serif" }}>
                     Input
                   </th>
-                  <th className="px-5 py-2.5 text-[11px] font-semibold text-gray-500 uppercase tracking-wider text-right">
+                  <th className="px-5 py-2.5 text-[11px] font-semibold text-white0/60 uppercase tracking-wider text-right" style={{ fontFamily: "'Orbitron', sans-serif" }}>
                     Output
                   </th>
-                  <th className="px-5 py-2.5 text-[11px] font-semibold text-gray-500 uppercase tracking-wider text-right">
+                  <th className="px-5 py-2.5 text-[11px] font-semibold text-white0/60 uppercase tracking-wider text-right" style={{ fontFamily: "'Orbitron', sans-serif" }}>
                     Cache Read
                   </th>
-                  <th className="px-5 py-2.5 text-[11px] font-semibold text-gray-500 uppercase tracking-wider text-right">
+                  <th className="px-5 py-2.5 text-[11px] font-semibold text-white0/60 uppercase tracking-wider text-right" style={{ fontFamily: "'Orbitron', sans-serif" }}>
                     Cache Write
                   </th>
-                  <th className="px-5 py-2.5 text-[11px] font-semibold text-gray-500 uppercase tracking-wider text-right">
+                  <th className="px-5 py-2.5 text-[11px] font-semibold text-white0/60 uppercase tracking-wider text-right" style={{ fontFamily: "'Orbitron', sans-serif" }}>
                     Cost
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border">
+              <tbody className="divide-y divide-cyan-500/10">
                 {cost.breakdown.map((row) => (
-                  <tr key={row.model} className="hover:bg-surface-4 transition-colors">
-                    <td className="px-5 py-2.5 text-sm font-mono text-gray-300">{row.model}</td>
-                    <td className="px-5 py-2.5 text-sm text-gray-400 text-right font-mono">
+                  <tr key={row.model} className="hover:bg-cyan-500/5 transition-colors">
+                    <td className="px-5 py-2.5 text-sm font-mono text-white/90">{row.model}</td>
+                    <td className="px-5 py-2.5 text-sm text-white/90 text-right font-mono">
                       {row.input_tokens.toLocaleString()}
                     </td>
-                    <td className="px-5 py-2.5 text-sm text-gray-400 text-right font-mono">
+                    <td className="px-5 py-2.5 text-sm text-white/90 text-right font-mono">
                       {row.output_tokens.toLocaleString()}
                     </td>
-                    <td className="px-5 py-2.5 text-sm text-gray-400 text-right font-mono">
+                    <td className="px-5 py-2.5 text-sm text-white/90 text-right font-mono">
                       {row.cache_read_tokens.toLocaleString()}
                     </td>
-                    <td className="px-5 py-2.5 text-sm text-gray-400 text-right font-mono">
+                    <td className="px-5 py-2.5 text-sm text-white/90 text-right font-mono">
                       {row.cache_write_tokens.toLocaleString()}
                     </td>
                     <td className="px-5 py-2.5 text-sm text-emerald-400 text-right font-mono font-medium">
@@ -319,7 +319,7 @@ export function SessionDetail() {
                   </tr>
                 ))}
                 <tr className="bg-surface-2">
-                  <td className="px-5 py-2.5 text-sm font-medium text-gray-200" colSpan={5}>
+                  <td className="px-5 py-2.5 text-sm font-medium text-white" colSpan={5}>
                     Total
                   </td>
                   <td className="px-5 py-2.5 text-sm text-emerald-400 text-right font-mono font-semibold">
@@ -334,18 +334,18 @@ export function SessionDetail() {
 
       {/* Event Timeline */}
       <div>
-        <h3 className="text-sm font-medium text-gray-300 mb-4">Event Timeline ({events.length})</h3>
+        <h3 className="text-sm font-medium text-cyan-300 mb-4">Event Timeline ({events.length})</h3>
         {events.length === 0 ? (
-          <p className="text-sm text-gray-500">No events recorded.</p>
+          <p className="text-sm text-white0/40">No events recorded.</p>
         ) : (
           <div className="card overflow-hidden">
-            <div className="divide-y divide-border max-h-[600px] overflow-y-auto overflow-x-auto">
+            <div className="divide-y divide-cyan-500/10 max-h-[600px] overflow-y-auto overflow-x-auto">
               {events.map((event, i) => (
                 <div
                   key={event.id ?? i}
-                  className="px-5 py-3 flex items-center gap-4 hover:bg-surface-4 transition-colors min-w-0"
+                  className="px-5 py-3 flex items-center gap-4 hover:bg-cyan-500/5 transition-colors min-w-0"
                 >
-                  <div className="w-16 text-[11px] text-gray-600 font-mono flex-shrink-0">
+                  <div className="w-16 text-[11px] text-white0/30 font-mono flex-shrink-0">
                     {timeAgo(event.created_at)}
                   </div>
                   <AgentStatusBadge
@@ -359,11 +359,11 @@ export function SessionDetail() {
                             : "connected"
                     }
                   />
-                  <span className="text-sm text-gray-300 flex-1 truncate">
+                  <span className="text-sm text-white/90 flex-1 truncate">
                     {event.summary || event.event_type}
                   </span>
                   {event.tool_name && (
-                    <span className="text-[11px] px-2 py-0.5 bg-surface-2 rounded text-gray-500 font-mono">
+                    <span className="text-[11px] px-2 py-0.5 bg-surface-2 rounded text-white0/40 font-mono">
                       {event.tool_name}
                     </span>
                   )}

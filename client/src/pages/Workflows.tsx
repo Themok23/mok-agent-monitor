@@ -147,13 +147,13 @@ export function Workflows() {
         />
         {selectedNode && (
           <div className="mt-3 flex items-center gap-2">
-            <span className="text-xs text-gray-500">Filtered by:</span>
-            <span className="badge bg-accent/15 text-accent border border-accent/20 text-xs">
+            <span className="text-xs text-white0/40">Filtered by:</span>
+            <span className="badge bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 text-xs">
               {selectedNode}
             </span>
             <button
               onClick={() => setSelectedNode(null)}
-              className="text-xs text-gray-500 hover:text-gray-300 underline"
+              className="text-xs text-white0/40 hover:text-cyan-300 underline"
             >
               Clear filter
             </button>
@@ -279,17 +279,17 @@ function Section({
     <div>
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2.5">
-          <span className="w-5 h-5 rounded-md bg-accent/15 text-accent text-[11px] font-bold flex items-center justify-center">
+          <span className="w-5 h-5 rounded-md bg-cyan-500/10 text-cyan-400 text-[11px] font-bold flex items-center justify-center border border-cyan-500/20">
             {number}
           </span>
-          <h2 className="text-sm font-semibold text-gray-100">{title}</h2>
+          <h2 className="text-sm font-semibold text-cyan-300">{title}</h2>
           <div className="relative">
             <button
               onMouseEnter={() => setShowTip(true)}
               onMouseLeave={() => setShowTip(false)}
               className="flex items-center justify-center"
             >
-              <Info className="w-3.5 h-3.5 text-gray-600 hover:text-gray-400 transition-colors" />
+              <Info className="w-3.5 h-3.5 text-white0/30 hover:text-cyan-400 transition-colors" />
             </button>
             {showTip && (
               <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 z-50 px-3 py-2 bg-[#12121f] border border-[#2a2a4a] rounded-lg shadow-2xl text-[11px] text-gray-300 whitespace-nowrap pointer-events-none">
@@ -299,7 +299,7 @@ function Section({
             )}
           </div>
         </div>
-        <span className="text-[11px] text-gray-600 hidden lg:block">{subtitle}</span>
+        <span className="text-[11px] text-white0/30 hidden lg:block">{subtitle}</span>
       </div>
       <div className="card p-4">{children}</div>
     </div>
@@ -329,26 +329,26 @@ function PageHeader({
   return (
     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
       <div className="flex items-center gap-3">
-        <div className="w-9 h-9 rounded-xl bg-accent/15 flex items-center justify-center">
-          <Workflow className="w-4.5 h-4.5 text-accent" />
+        <div className="w-9 h-9 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center">
+          <Workflow className="w-4.5 h-4.5 text-cyan-400" />
         </div>
         <div>
-          <h1 className="text-lg font-semibold text-gray-100">Workflows</h1>
-          <p className="text-xs text-gray-500">Agent orchestration intelligence</p>
+          <h1 className="text-lg font-semibold text-cyan-400" style={{ fontFamily: "'Orbitron', sans-serif" }}>Workflows</h1>
+          <p className="text-xs text-white0/50">Agent orchestration intelligence</p>
         </div>
       </div>
 
       <div className="flex items-center gap-2 flex-wrap">
         {/* Status filter tabs */}
-        <div className="flex bg-surface-2 rounded-lg p-0.5 border border-border">
+        <div className="flex bg-surface-2 rounded-lg p-0.5 border border-cyan-500/10">
           {filters.map((f) => (
             <button
               key={f.value}
               onClick={() => onStatusFilterChange(f.value)}
               className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
                 statusFilter === f.value
-                  ? "bg-accent/15 text-accent"
-                  : "text-gray-500 hover:text-gray-300"
+                  ? "bg-cyan-500/20 text-white"
+                  : "text-white0/40 hover:text-cyan-300"
               }`}
             >
               {f.label}
@@ -359,21 +359,21 @@ function PageHeader({
         {/* Actions */}
         <button
           onClick={onRefresh}
-          className="p-2 rounded-lg text-gray-500 hover:text-gray-300 hover:bg-surface-3 transition-colors"
+          className="p-2 rounded-lg text-white0/40 hover:text-cyan-300 hover:bg-surface-3 transition-colors"
           title="Refresh data"
         >
           <RefreshCw className="w-4 h-4" />
         </button>
         <button
           onClick={onExport}
-          className="p-2 rounded-lg text-gray-500 hover:text-gray-300 hover:bg-surface-3 transition-colors"
+          className="p-2 rounded-lg text-white0/40 hover:text-cyan-300 hover:bg-surface-3 transition-colors"
           title="Export as JSON"
         >
           <Download className="w-4 h-4" />
         </button>
 
         {lastUpdated && (
-          <span className="text-[10px] text-gray-600 ml-1">
+          <span className="text-[10px] text-white0/30 ml-1">
             Updated {lastUpdated.toLocaleTimeString()}
           </span>
         )}

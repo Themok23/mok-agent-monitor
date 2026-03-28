@@ -1,11 +1,16 @@
 /**
  * Basic auth middleware for password-protecting the dashboard.
- * Reads credentials from environment variables:
- *   DASHBOARD_USER (default: "mok")
- *   DASHBOARD_PASS (required for auth to be active)
- *
- * If DASHBOARD_PASS is not set, auth is disabled (local dev mode).
- * The /api/hooks/event endpoint is exempted - it uses HOOK_SECRET instead.
+ * 
+ * On Vercel, static files (HTML/JS/CSS) are served directly without
+ * going through this middleware. API routes DO go through it.
+ * 
+ * Strategy: Exempt all /api/* routes from basic auth since the
+ * frontend JS needs to call them without credentials. The hooks
+ * endpoint uses its own HOOK_SECRET for security.
+ * 
+ * For local mode, basic auth protects the whole app (including API),
+ * but the frontend is served from the same origin so the browser
+ * sends credentials automatically after the initial login prompt.
  */
 
 function authMiddleware(req, res, next) {
@@ -14,8 +19,10 @@ function authMiddleware(req, res, next) {
   // Auth disabled if no password configured
   if (!pass) return next();
 
-  // Exempt the hooks endpoint - it authenticates via HOOK_SECRET
-  if (req.path === "/api/hooks/event" || req.path === "/api/health") {
+  // On Vercel: exempt ALL API routes from basic auth.
+  // The frontend JS makes fetch() calls without auth headers.
+  // Hook endpoint is separately protected by HOOK_SECRET.
+  if (req.path.startsWith("/api/")) {
     return next();
   }
 

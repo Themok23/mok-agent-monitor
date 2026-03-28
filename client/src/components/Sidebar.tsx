@@ -2,6 +2,7 @@ import { NavLink } from "react-router-dom";
 import {
   LayoutDashboard,
   Columns3,
+  Users,
   FolderOpen,
   Activity,
   BarChart3,
@@ -18,6 +19,7 @@ import {
 const NAV_ITEMS = [
   { to: "/", icon: LayoutDashboard, label: "Dashboard" },
   { to: "/kanban", icon: Columns3, label: "Agent Board" },
+  { to: "/agents", icon: Users, label: "Agent Fleet" },
   { to: "/sessions", icon: FolderOpen, label: "Sessions" },
   { to: "/activity", icon: Activity, label: "Activity Feed" },
   { to: "/analytics", icon: BarChart3, label: "Analytics" },
@@ -44,20 +46,21 @@ interface SidebarProps {
 export function Sidebar({ wsConnected, collapsed, onToggle }: SidebarProps) {
   return (
     <aside
-      className={`fixed left-0 top-0 bottom-0 bg-surface-1 border-r border-border flex flex-col z-30 overflow-y-auto overflow-x-hidden transition-[width] duration-200 ${
+      className={`fixed left-0 top-0 bottom-0 bg-[#060610] border-r border-cyan-500/10 flex flex-col z-30 overflow-y-auto overflow-x-hidden transition-[width] duration-200 ${
         collapsed ? "w-[4.25rem]" : "w-60"
       }`}
+      style={{ boxShadow: "1px 0 20px rgba(0, 255, 255, 0.05)" }}
     >
       {/* Brand */}
-      <div className="px-3 py-4 border-b border-border">
+      <div className="px-3 py-4 border-b border-cyan-500/10">
         <div className={`flex items-center ${collapsed ? "justify-center" : "gap-3 px-2"}`}>
-          <div className="w-8 h-8 rounded-lg bg-accent/20 flex items-center justify-center flex-shrink-0">
-            <Activity className="w-4 h-4 text-accent" />
+          <div className="w-8 h-8 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center flex-shrink-0">
+            <Activity className="w-4 h-4 text-cyan-400 animate-pulse" />
           </div>
           {!collapsed && (
             <div className="min-w-0">
-              <h1 className="text-sm font-semibold text-gray-100 truncate">Agent Dashboard</h1>
-              <p className="text-[11px] text-gray-500">Claude Code Monitor</p>
+              <h1 className="text-sm font-semibold text-cyan-400 truncate" style={{ fontFamily: "Orbitron, monospace" }}>MOK HQ</h1>
+              <p className="text-[11px] text-cyan-500/50">Agent Command Center</p>
             </div>
           )}
         </div>
@@ -76,8 +79,8 @@ export function Sidebar({ wsConnected, collapsed, onToggle }: SidebarProps) {
                 collapsed ? "justify-center px-2 py-2.5" : "px-3 py-2.5"
               } ${
                 isActive
-                  ? "bg-accent/10 text-accent border border-accent/20"
-                  : "text-gray-400 hover:text-gray-200 hover:bg-surface-3 border border-transparent"
+                  ? "bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 shadow-[0_0_10px_rgba(0,255,255,0.1)]"
+                  : "text-gray-500 hover:text-cyan-300 hover:bg-cyan-500/5 border border-transparent"
               }`
             }
           >
@@ -91,7 +94,7 @@ export function Sidebar({ wsConnected, collapsed, onToggle }: SidebarProps) {
       <div className="px-2 py-2">
         <button
           onClick={onToggle}
-          className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-xs text-gray-500 hover:text-gray-300 hover:bg-surface-3 transition-colors"
+          className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-xs text-gray-600 hover:text-cyan-400 hover:bg-cyan-500/5 transition-colors"
           title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
           {collapsed ? (
@@ -107,13 +110,13 @@ export function Sidebar({ wsConnected, collapsed, onToggle }: SidebarProps) {
 
       {/* Footer */}
       <div
-        className={`px-3 py-3 border-t border-border space-y-2 ${collapsed ? "items-center" : ""}`}
+        className={`px-3 py-3 border-t border-cyan-500/10 space-y-2 ${collapsed ? "items-center" : ""}`}
       >
         <div className={`flex items-center text-xs ${collapsed ? "justify-center" : "gap-2"}`}>
           {wsConnected ? (
             <>
-              <Wifi className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
-              {!collapsed && <span className="text-emerald-400">Live</span>}
+              <Wifi className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" style={{ filter: "drop-shadow(0 0 4px rgba(0, 255, 255, 0.3))" }} />
+              {!collapsed && <span className="text-cyan-400">Live</span>}
             </>
           ) : (
             <>
@@ -126,43 +129,43 @@ export function Sidebar({ wsConnected, collapsed, onToggle }: SidebarProps) {
         {!collapsed && (
           <div className="flex items-center gap-3">
             <a
-              href="https://github.com/hoangsonww"
+              href="https://github.com/Themok23/mok-agent-monitor"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-500 hover:text-gray-300 transition-colors"
+              className="text-gray-500 hover:text-cyan-400 transition-colors"
               title="GitHub"
             >
               <Github className="w-3.5 h-3.5" />
             </a>
             <a
-              href="https://sonnguyenhoang.com"
+              href="https://themok.company"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-500 hover:text-gray-300 transition-colors flex items-center gap-1 text-[11px]"
-              title="sonnguyenhoang.com"
+              className="text-gray-500 hover:text-cyan-400 transition-colors flex items-center gap-1 text-[11px]"
+              title="themok.company"
             >
               <Globe className="w-3.5 h-3.5" />
-              <span>sonnguyenhoang.com</span>
+              <span>themok.company</span>
             </a>
           </div>
         )}
         {collapsed && (
           <div className="flex justify-center gap-2">
             <a
-              href="https://github.com/hoangsonww"
+              href="https://github.com/Themok23/mok-agent-monitor"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-500 hover:text-gray-300 transition-colors"
+              className="text-gray-500 hover:text-cyan-400 transition-colors"
               title="GitHub"
             >
               <Github className="w-3.5 h-3.5" />
             </a>
             <a
-              href="https://sonnguyenhoang.com"
+              href="https://themok.company"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-500 hover:text-gray-300 transition-colors"
-              title="sonnguyenhoang.com"
+              className="text-gray-500 hover:text-cyan-400 transition-colors"
+              title="themok.company"
             >
               <Globe className="w-3.5 h-3.5" />
             </a>

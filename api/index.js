@@ -1,6 +1,5 @@
 /**
  * Vercel serverless API entry point.
- * Wraps the Express app for serverless deployment.
  * Uses Neon PostgreSQL instead of SQLite.
  */
 
@@ -20,7 +19,7 @@ app.get("/api/health", (_req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString(), mode: "vercel" });
 });
 
-// Hooks endpoint (receives events from local Claude Code)
+// Hooks endpoint
 app.post("/api/hooks/event", hookAuthMiddleware, async (req, res) => {
   try {
     await neonDb.ensureSchema();
@@ -31,11 +30,9 @@ app.post("/api/hooks/event", hookAuthMiddleware, async (req, res) => {
     const model = data?.model || null;
     const cwd = data?.cwd || null;
 
-    // Auto-create session if needed
     const existing = await neonDb.getSession(sessionId);
     if (!existing && sessionId !== "unknown") {
       await neonDb.insertSession(sessionId, null, "active", cwd, model, null);
-      // Create main agent
       await neonDb.insertAgent(
         `${sessionId}-main`, sessionId, "main", "main",
         null, "connected", null, null, null
@@ -44,16 +41,13 @@ app.post("/api/hooks/event", hookAuthMiddleware, async (req, res) => {
       await neonDb.reactivateSession(sessionId);
     }
 
-    // Determine agent ID
     const agentId = data?.agent_id || `${sessionId}-main`;
 
-    // Insert event
     await neonDb.insertEvent(
       sessionId, agentId, hook_type, toolName,
       data?.summary || null, JSON.stringify(data)
     );
 
-    // Update agent status based on hook type
     if (hook_type === "PreToolUse") {
       await neonDb.updateAgent(null, "working", null, toolName, null, null, agentId).catch(() => {});
     } else if (hook_type === "PostToolUse") {
@@ -63,7 +57,6 @@ app.post("/api/hooks/event", hookAuthMiddleware, async (req, res) => {
       await neonDb.updateAgent(null, "completed", null, null, new Date().toISOString(), null, agentId).catch(() => {});
     }
 
-    // Update token usage if present
     if (data?.usage) {
       const u = data.usage;
       await neonDb.upsertTokenUsage(
@@ -88,10 +81,12 @@ app.get("/api/sessions", async (req, res) => {
     const limit = parseInt(req.query.limit || "50");
     const offset = parseInt(req.query.offset || "0");
     const status = req.query.status;
-    const sessions = status
+    const rows = status
       ? await neonDb.listSessionsByStatus(status, limit, offset)
       : await neonDb.listSessions(limit, offset);
-    res.json(sessions);
+    // Wrap in { sessions: [...] } to match frontend expectations
+    const sessions = Array.isArray(rows) ? rows : (rows?.sessions || rows || []);
+    res.json({ sessions });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -102,7 +97,13 @@ app.get("/api/sessions/:id", async (req, res) => {
     await neonDb.ensureSchema();
     const session = await neonDb.getSession(req.params.id);
     if (!session) return res.status(404).json({ error: "Session not found" });
-    res.json(session);
+    const agents = await neonDb.listAgentsBySession(req.params.id);
+    const events = await neonDb.listEventsBySession(req.params.id);
+    res.json({
+      session,
+      agents: Array.isArray(agents) ? agents : (agents?.agents || []),
+      events: Array.isArray(events) ? events : (events?.events || []),
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -116,15 +117,17 @@ app.get("/api/agents", async (req, res) => {
     const status = req.query.status;
     const limit = parseInt(req.query.limit || "50");
     const offset = parseInt(req.query.offset || "0");
-    let agents;
+    let rows;
     if (sessionId) {
-      agents = await neonDb.listAgentsBySession(sessionId);
+      rows = await neonDb.listAgentsBySession(sessionId);
     } else if (status) {
-      agents = await neonDb.listAgentsByStatus(status, limit, offset);
+      rows = await neonDb.listAgentsByStatus(status, limit, offset);
     } else {
-      agents = await neonDb.listAgentsByStatus("working", limit, offset);
+      rows = await neonDb.listAgentsByStatus("working", limit, offset);
     }
-    res.json(agents);
+    // Wrap in { agents: [...] }
+    const agents = Array.isArray(rows) ? rows : (rows?.agents || []);
+    res.json({ agents });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -137,16 +140,17 @@ app.get("/api/events", async (req, res) => {
     const sessionId = req.query.session_id;
     const limit = parseInt(req.query.limit || "100");
     const offset = parseInt(req.query.offset || "0");
-    const events = sessionId
+    const rows = sessionId
       ? await neonDb.listEventsBySession(sessionId)
       : await neonDb.listEvents(limit, offset);
-    res.json(events);
+    const events = Array.isArray(rows) ? rows : (rows?.events || []);
+    res.json({ events });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// Stats
+// Stats - match the frontend Stats type exactly
 app.get("/api/stats", async (req, res) => {
   try {
     await neonDb.ensureSchema();
@@ -154,10 +158,27 @@ app.get("/api/stats", async (req, res) => {
     const agentCounts = await neonDb.agentStatusCounts();
     const sessionCounts = await neonDb.sessionStatusCounts();
     const tokens = await neonDb.getTokenTotals();
+
+    // Convert arrays to Record<string, number> for frontend compatibility
+    const agents_by_status = {};
+    (Array.isArray(agentCounts) ? agentCounts : []).forEach(r => {
+      agents_by_status[r.status] = parseInt(r.count) || 0;
+    });
+    const sessions_by_status = {};
+    (Array.isArray(sessionCounts) ? sessionCounts : []).forEach(r => {
+      sessions_by_status[r.status] = parseInt(r.count) || 0;
+    });
+
     res.json({
-      ...stats,
-      agent_status: agentCounts,
-      session_status: sessionCounts,
+      total_sessions: stats?.total_sessions || 0,
+      active_sessions: stats?.active_sessions || 0,
+      active_agents: stats?.active_agents || 0,
+      total_agents: stats?.total_agents || 0,
+      total_events: stats?.total_events || 0,
+      events_today: stats?.events_today || 0,
+      ws_connections: 0,
+      agents_by_status,
+      sessions_by_status,
       tokens,
     });
   } catch (err) {
@@ -188,12 +209,77 @@ app.get("/api/analytics", async (req, res) => {
   }
 });
 
-// Pricing
+// Pricing endpoints
 app.get("/api/pricing", async (req, res) => {
   try {
     await neonDb.ensureSchema();
-    const pricing = await neonDb.listPricing();
-    res.json(pricing);
+    const pricing = await neonDb.listPricing().catch(() => []);
+    res.json({ pricing: Array.isArray(pricing) ? pricing : [] });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get("/api/pricing/cost", async (req, res) => {
+  try {
+    await neonDb.ensureSchema();
+    // Calculate total cost from token usage and pricing rules
+    const tokens = await neonDb.getTokenTotals().catch(() => ({
+      total_input: 0, total_output: 0, total_cache_read: 0, total_cache_write: 0
+    }));
+    // Simple cost estimate (Claude pricing ballpark)
+    const inputCost = ((tokens?.total_input || 0) / 1_000_000) * 3;
+    const outputCost = ((tokens?.total_output || 0) / 1_000_000) * 15;
+    const cacheReadCost = ((tokens?.total_cache_read || 0) / 1_000_000) * 0.3;
+    const cacheWriteCost = ((tokens?.total_cache_write || 0) / 1_000_000) * 3.75;
+    const total_cost = inputCost + outputCost + cacheReadCost + cacheWriteCost;
+
+    res.json({
+      total_cost: Math.round(total_cost * 100) / 100,
+      breakdown: [],
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get("/api/pricing/cost/:sessionId", async (req, res) => {
+  try {
+    res.json({ total_cost: 0, breakdown: [] });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Settings info
+app.get("/api/settings/info", async (req, res) => {
+  try {
+    res.json({
+      db: { path: "neon", size: 0, counts: {} },
+      hooks: { installed: true, path: "remote", hooks: {} },
+      server: { uptime: process.uptime(), node_version: process.version, platform: "vercel", ws_connections: 0 },
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Workflows stub
+app.get("/api/workflows", async (req, res) => {
+  try {
+    res.json({
+      stats: { totalSessions: 0, totalAgents: 0, totalSubagents: 0, avgSubagents: 0, successRate: 0, avgDepth: 0, avgDurationSec: 0, totalCompactions: 0, avgCompactions: 0, topFlow: null },
+      orchestration: { sessionCount: 0, mainCount: 0, subagentTypes: [], edges: [], outcomes: [], compactions: { total: 0, sessions: 0 } },
+      toolFlow: { transitions: [], toolCounts: [] },
+      effectiveness: [],
+      patterns: { patterns: [], soloSessionCount: 0, soloPercentage: 0 },
+      modelDelegation: { mainModels: [], subagentModels: [], tokensByModel: [] },
+      errorPropagation: { byDepth: [], byType: [], sessionsWithErrors: 0, totalSessions: 0, errorRate: 0 },
+      concurrency: { aggregateLanes: [] },
+      complexity: [],
+      compaction: { totalCompactions: 0, tokensRecovered: 0, perSession: [], sessionsWithCompactions: 0, totalSessions: 0 },
+      cooccurrence: [],
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

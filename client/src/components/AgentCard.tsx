@@ -24,7 +24,7 @@ export function AgentCard({ agent, onClick }: AgentCardProps) {
   return (
     <div
       onClick={handleClick}
-      className={`card-hover p-4 cursor-pointer animate-fade-in overflow-hidden ${
+      className={`card-hover p-4 cursor-pointer animate-fade-in overflow-hidden bg-[#0a0e1f] border border-cyan-500/10 hover:bg-cyan-500/5 ${
         isActive ? "border-l-2 border-l-emerald-500/50" : ""
       }`}
     >
@@ -44,9 +44,9 @@ export function AgentCard({ agent, onClick }: AgentCardProps) {
             )}
           </div>
           <div className="min-w-0 overflow-hidden">
-            <p className="text-sm font-medium text-gray-200 truncate">{agent.name}</p>
+            <p className="text-sm font-medium text-white truncate">{agent.name}</p>
             {agent.subagent_type && (
-              <p className="text-[11px] text-gray-500 truncate">{agent.subagent_type}</p>
+              <p className="text-[11px] text-cyan-500/50 truncate">{agent.subagent_type}</p>
             )}
           </div>
         </div>
@@ -54,12 +54,12 @@ export function AgentCard({ agent, onClick }: AgentCardProps) {
       </div>
 
       {agent.task && (
-        <p className="text-xs text-gray-400 mb-3 line-clamp-2 leading-relaxed">{agent.task}</p>
+        <p className="text-xs text-cyan-500/60 mb-3 line-clamp-2 leading-relaxed">{agent.task}</p>
       )}
 
-      <div className="flex items-center gap-4 text-[11px] text-gray-500 min-w-0 overflow-hidden">
+      <div className="flex items-center gap-4 text-[11px] text-cyan-500/50 min-w-0 overflow-hidden">
         {agent.current_tool && (
-          <span className="flex items-center gap-1">
+          <span className="flex items-center gap-1 bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 px-2 py-1 rounded">
             <Wrench className="w-3 h-3" />
             {agent.current_tool}
           </span>
@@ -70,7 +70,7 @@ export function AgentCard({ agent, onClick }: AgentCardProps) {
               <Clock className="w-3 h-3" />
               ran {formatDuration(agent.started_at, agent.ended_at)}
             </span>
-            <span className="text-gray-600">{timeAgo(agent.ended_at)}</span>
+            <span className="text-cyan-500/30">{timeAgo(agent.ended_at)}</span>
           </>
         ) : (
           <span className="flex items-center gap-1">
@@ -78,7 +78,7 @@ export function AgentCard({ agent, onClick }: AgentCardProps) {
             {timeAgo(agent.updated_at || agent.started_at)}
           </span>
         )}
-        <span className="ml-auto font-mono opacity-50">{agent.session_id.slice(0, 8)}</span>
+        <span className="ml-auto font-mono text-cyan-500/30">{agent.session_id.slice(0, 8)}</span>
       </div>
     </div>
   );

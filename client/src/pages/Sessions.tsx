@@ -78,18 +78,18 @@ export function Sessions() {
     <div className="animate-fade-in">
       <div className="flex flex-wrap items-center justify-between gap-3 mb-8">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-accent/15 flex items-center justify-center">
-            <FolderOpen className="w-4.5 h-4.5 text-accent" />
+          <div className="w-9 h-9 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center">
+            <FolderOpen className="w-4.5 h-4.5 text-cyan-400" />
           </div>
           <div>
-            <h1 className="text-lg font-semibold text-gray-100">Sessions</h1>
-            <p className="text-xs text-gray-500">
+            <h1 className="text-lg font-semibold text-cyan-400" style={{ fontFamily: "'Orbitron', sans-serif" }}>Sessions</h1>
+            <p className="text-xs text-white0/50">
               {sessions.length}
               {filter ? ` ${filter}` : ""} session{sessions.length !== 1 ? "s" : ""} recorded
             </p>
           </div>
         </div>
-        <button onClick={load} className="btn-ghost flex-shrink-0">
+        <button onClick={load} className="btn-ghost flex-shrink-0 text-cyan-400 hover:text-cyan-300">
           <RefreshCw className="w-4 h-4" /> Refresh
         </button>
       </div>
@@ -97,13 +97,13 @@ export function Sessions() {
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-3 mb-6">
         <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white0/30" />
           <input
             type="text"
             placeholder="Search sessions..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="input w-full pl-10"
+            className="input w-full pl-10 bg-[#0a0e1f] border-cyan-500/20 text-white placeholder:text-white0/30"
           />
         </div>
         <div className="flex gap-1 bg-surface-2 rounded-lg p-1">
@@ -113,8 +113,8 @@ export function Sessions() {
               onClick={() => setFilter(opt.value)}
               className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
                 filter === opt.value
-                  ? "bg-surface-4 text-gray-200"
-                  : "text-gray-500 hover:text-gray-300"
+                  ? "bg-cyan-500/20 text-white"
+                  : "text-white0/40 hover:text-cyan-300"
               }`}
             >
               {opt.label}
@@ -138,44 +138,44 @@ export function Sessions() {
           <div className="card overflow-x-auto">
             <table className="w-full min-w-[800px]">
               <thead>
-                <tr className="border-b border-border text-left">
-                  <th className="px-5 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
+                <tr className="border-b border-cyan-500/10 text-left">
+                  <th className="px-5 py-3 text-[11px] font-semibold text-white0/60 uppercase tracking-wider" style={{ fontFamily: "'Orbitron', sans-serif" }}>
                     Session
                   </th>
-                  <th className="px-5 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
+                  <th className="px-5 py-3 text-[11px] font-semibold text-white0/60 uppercase tracking-wider" style={{ fontFamily: "'Orbitron', sans-serif" }}>
                     Status
                   </th>
-                  <th className="px-5 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
+                  <th className="px-5 py-3 text-[11px] font-semibold text-white0/60 uppercase tracking-wider" style={{ fontFamily: "'Orbitron', sans-serif" }}>
                     Last Active
                   </th>
-                  <th className="px-5 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
+                  <th className="px-5 py-3 text-[11px] font-semibold text-white0/60 uppercase tracking-wider" style={{ fontFamily: "'Orbitron', sans-serif" }}>
                     Duration
                   </th>
-                  <th className="px-5 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
+                  <th className="px-5 py-3 text-[11px] font-semibold text-white0/60 uppercase tracking-wider" style={{ fontFamily: "'Orbitron', sans-serif" }}>
                     Agents
                   </th>
-                  <th className="px-5 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
+                  <th className="px-5 py-3 text-[11px] font-semibold text-white0/60 uppercase tracking-wider" style={{ fontFamily: "'Orbitron', sans-serif" }}>
                     Cost
                   </th>
-                  <th className="px-5 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
+                  <th className="px-5 py-3 text-[11px] font-semibold text-white0/60 uppercase tracking-wider" style={{ fontFamily: "'Orbitron', sans-serif" }}>
                     Directory
                   </th>
                   <th className="w-10"></th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border">
+              <tbody className="divide-y divide-cyan-500/10">
                 {paged.map((session) => (
                   <tr
                     key={session.id}
                     onClick={() => navigate(`/sessions/${session.id}`)}
-                    className="hover:bg-surface-4 transition-colors cursor-pointer group"
+                    className="hover:bg-cyan-500/5 transition-colors cursor-pointer group"
                   >
                     <td className="px-5 py-4">
                       <div>
-                        <p className="text-sm font-medium text-gray-200">
+                        <p className="text-sm font-medium text-white">
                           {session.name || `Session ${session.id.slice(0, 8)}`}
                         </p>
-                        <p className="text-[11px] text-gray-600 font-mono">
+                        <p className="text-[11px] text-white0/30 font-mono">
                           {session.id.slice(0, 12)}
                         </p>
                       </div>
@@ -183,25 +183,25 @@ export function Sessions() {
                     <td className="px-5 py-4">
                       <SessionStatusBadge status={session.status as SessionStatus} />
                     </td>
-                    <td className="px-5 py-4 text-sm text-gray-400">
+                    <td className="px-5 py-4 text-sm text-white/90">
                       {formatDateTime(session.last_activity || session.started_at)}
                     </td>
-                    <td className="px-5 py-4 text-sm text-gray-400 font-mono">
+                    <td className="px-5 py-4 text-sm text-white/90 font-mono">
                       {session.ended_at
                         ? formatDuration(session.started_at, session.ended_at)
                         : "running"}
                     </td>
-                    <td className="px-5 py-4 text-sm text-gray-400">
+                    <td className="px-5 py-4 text-sm text-white/90">
                       {session.agent_count ?? "-"}
                     </td>
-                    <td className="px-5 py-4 text-sm text-gray-400 font-mono">
+                    <td className="px-5 py-4 text-sm text-white/90 font-mono">
                       {session.cost != null && session.cost > 0 ? fmtCost(session.cost) : "-"}
                     </td>
-                    <td className="px-5 py-4 text-[11px] text-gray-500 font-mono">
+                    <td className="px-5 py-4 text-[11px] text-white0/40 font-mono">
                       {session.cwd ? truncate(session.cwd, 30) : "-"}
                     </td>
                     <td className="px-3 py-4">
-                      <ChevronRight className="w-4 h-4 text-gray-600 group-hover:text-gray-400 transition-colors" />
+                      <ChevronRight className="w-4 h-4 text-white0/30 group-hover:text-cyan-400 transition-colors" />
                     </td>
                   </tr>
                 ))}
@@ -210,7 +210,7 @@ export function Sessions() {
           </div>
           {totalPages > 1 && (
             <div className="flex items-center justify-between mt-4 px-1">
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-white0/40">
                 Showing {page * PAGE_SIZE + 1}–{Math.min((page + 1) * PAGE_SIZE, filtered.length)}{" "}
                 of {filtered.length}
               </span>
@@ -218,17 +218,17 @@ export function Sessions() {
                 <button
                   onClick={() => setPage((p) => Math.max(0, p - 1))}
                   disabled={page === 0}
-                  className="px-3 py-1.5 text-xs font-medium rounded-md bg-surface-2 text-gray-400 hover:text-gray-200 disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="px-3 py-1.5 text-xs font-medium rounded-md bg-surface-2 text-white0/40 hover:text-white/90 disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   Previous
                 </button>
-                <span className="px-3 py-1.5 text-xs text-gray-500">
+                <span className="px-3 py-1.5 text-xs text-white0/40">
                   {page + 1} / {totalPages}
                 </span>
                 <button
                   onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
                   disabled={page >= totalPages - 1}
-                  className="px-3 py-1.5 text-xs font-medium rounded-md bg-surface-2 text-gray-400 hover:text-gray-200 disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="px-3 py-1.5 text-xs font-medium rounded-md bg-surface-2 text-white0/40 hover:text-white/90 disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   Next
                 </button>

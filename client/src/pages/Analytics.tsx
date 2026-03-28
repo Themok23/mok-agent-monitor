@@ -124,7 +124,7 @@ function Heatmap({ weeks }: { weeks: Array<Array<{ date: string; count: number }
         {weeks.map((_, wi) => {
           const mp = monthPositions.find((m) => m.col === wi);
           return (
-            <div key={wi} className="text-[10px] text-gray-600 flex-shrink-0" style={{ width: 13 }}>
+            <div key={wi} className="text-[10px] text-white0/30 flex-shrink-0" style={{ width: 13 }}>
               {mp ? mp.label : ""}
             </div>
           );
@@ -136,7 +136,7 @@ function Heatmap({ weeks }: { weeks: Array<Array<{ date: string; count: number }
           {DAY_LABELS.map((d, i) => (
             <div
               key={i}
-              className="text-[10px] text-gray-600 flex items-center"
+              className="text-[10px] text-white0/30 flex items-center"
               style={{ height: 13 }}
             >
               {d}
@@ -153,7 +153,7 @@ function Heatmap({ weeks }: { weeks: Array<Array<{ date: string; count: number }
                   show(
                     e,
                     <>
-                      <span className="text-gray-400">{cell.date}</span>
+                      <span className="text-white/90">{cell.date}</span>
                       <span className="ml-2 font-medium">
                         {cell.count} event{cell.count !== 1 ? "s" : ""}
                       </span>
@@ -177,7 +177,7 @@ function Heatmap({ weeks }: { weeks: Array<Array<{ date: string; count: number }
         ))}
       </div>
       {/* Legend */}
-      <div className="flex items-center gap-2 mt-3 text-[11px] text-gray-600">
+      <div className="flex items-center gap-2 mt-3 text-[11px] text-white0/30">
         <span>Less</span>
         {[0, 0.25, 0.5, 0.75, 1].map((f) => {
           const v = Math.round(f * maxCount);
@@ -227,7 +227,7 @@ function Sparkline({
             show(
               e,
               <>
-                <span className="text-gray-400">{date}</span>
+                <span className="text-white/90">{date}</span>
                 <span className="ml-2 font-medium">{count} events</span>
               </>
             )
@@ -246,7 +246,7 @@ function BarRow({
   label,
   count,
   max,
-  color = "bg-accent",
+  color = "bg-cyan-400",
   pct,
 }: {
   label: string;
@@ -258,7 +258,7 @@ function BarRow({
   const width = pct !== undefined ? pct : max > 0 ? Math.round((count / max) * 100) : 0;
   return (
     <div className="flex items-center gap-3">
-      <span className="text-xs text-gray-400 w-28 truncate flex-shrink-0" title={label}>
+      <span className="text-xs text-white/90 w-28 truncate flex-shrink-0" title={label}>
         {label}
       </span>
       <div className="flex-1 bg-surface-3 rounded-full h-2">
@@ -268,7 +268,7 @@ function BarRow({
         />
       </div>
       <Tip raw={count.toLocaleString()}>
-        <span className="text-xs text-gray-500 w-10 text-right flex-shrink-0">{fmt(count)}</span>
+        <span className="text-xs text-white0/40 w-10 text-right flex-shrink-0">{fmt(count)}</span>
       </Tip>
     </div>
   );
@@ -285,7 +285,7 @@ function DonutChart({
 }) {
   const { show, move, hide, node } = useTooltip();
   const total = segments.reduce((s, g) => s + g.value, 0);
-  if (total === 0) return <div className="text-xs text-gray-500">No data</div>;
+  if (total === 0) return <div className="text-xs text-white0/40">No data</div>;
 
   const r = 52;
   const cx = 64;
@@ -347,8 +347,8 @@ function DonutChart({
               className="w-2.5 h-2.5 rounded-sm flex-shrink-0"
               style={{ backgroundColor: color }}
             />
-            <span className="text-gray-400">{label}</span>
-            <span className="text-gray-500 ml-auto pl-4">{Math.round((value / total) * 100)}%</span>
+            <span className="text-white/90">{label}</span>
+            <span className="text-white0/40 ml-auto pl-4">{Math.round((value / total) * 100)}%</span>
           </div>
         ))}
       </div>
@@ -364,23 +364,23 @@ function StatPill({
   raw,
   sub,
   icon: Icon,
-  color = "text-accent",
+  color = "text-cyan-400",
 }: {
   label: string;
   value: string | number;
   raw?: string;
   sub?: string;
-  icon: React.ElementType;
+  icon: React.ComponentType<{ className?: string }>;
   color?: string;
 }) {
   return (
     <div className="card p-5 flex flex-col gap-2">
       <div className="flex items-center justify-between">
-        <span className="text-xs text-gray-500 uppercase tracking-wider">{label}</span>
+        <span className="text-xs text-white0/40 uppercase tracking-wider">{label}</span>
         <Icon className={`w-4 h-4 ${color}`} />
       </div>
       <p className={`text-2xl font-bold ${color}`}>{raw ? <Tip raw={raw}>{value}</Tip> : value}</p>
-      {sub && <p className="text-[11px] text-gray-500">{sub}</p>}
+      {sub && <p className="text-[11px] text-white0/40">{sub}</p>}
     </div>
   );
 }
@@ -538,27 +538,27 @@ export function Analytics() {
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex items-center gap-3 mb-1">
-            <div className="w-9 h-9 rounded-xl bg-accent/15 flex items-center justify-center flex-shrink-0">
-              <BarChart3 className="w-4.5 h-4.5 text-accent" />
+            <div className="w-9 h-9 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center flex-shrink-0">
+              <BarChart3 className="w-4.5 h-4.5 text-cyan-400" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-lg font-semibold text-gray-100">Analytics</h1>
+                <h1 className="text-lg font-semibold text-cyan-400" style={{ fontFamily: "'Orbitron', sans-serif" }}>Analytics</h1>
                 {wsConnected ? (
                   <span className="flex items-center gap-1.5 text-[11px] text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse-dot" />
                     Live
                   </span>
                 ) : (
-                  <span className="flex items-center gap-1.5 text-[11px] text-gray-400 bg-gray-500/10 border border-gray-500/20 px-2 py-0.5 rounded-full">
+                  <span className="flex items-center gap-1.5 text-[11px] text-white/90 bg-gray-500/10 border border-gray-500/20 px-2 py-0.5 rounded-full">
                     <span className="w-1.5 h-1.5 rounded-full bg-gray-400" />
                     Offline
                   </span>
                 )}
               </div>
-              <p className="text-xs text-gray-500 flex items-center gap-2">
+              <p className="text-xs text-white0/50 flex items-center gap-2">
                 Real-time monitoring and analytics for Claude Code sessions
-                <span className="inline-flex items-center gap-1.5 text-[11px] text-gray-500 bg-surface-2 border border-border px-2 py-0.5 rounded-md font-mono ml-2">
+                <span className="inline-flex items-center gap-1.5 text-[11px] text-white0/40 bg-surface-2 border border-cyan-500/10 px-2 py-0.5 rounded-md font-mono ml-2">
                   <Clock className="w-3 h-3" />
                   {lastUpdate.toLocaleTimeString()}
                 </span>
@@ -567,11 +567,11 @@ export function Analytics() {
           </div>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
-          <button onClick={load} className="btn-ghost" disabled={loading}>
+          <button onClick={load} className="btn-ghost text-cyan-400 hover:text-cyan-300" disabled={loading}>
             <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
             Refresh
           </button>
-          <button onClick={handleExport} className="btn-ghost" disabled={!data}>
+          <button onClick={handleExport} className="btn-ghost text-cyan-400 hover:text-cyan-300" disabled={!data}>
             <Download className="w-4 h-4" />
             Export
           </button>
@@ -629,23 +629,23 @@ export function Analytics() {
       {/* Activity heatmap + 30-day sparkline */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="card p-5 lg:col-span-2 overflow-x-auto">
-          <h3 className="text-sm font-medium text-gray-300 mb-4">Event Activity — Last 52 Weeks</h3>
+          <h3 className="text-sm font-medium text-white/90 mb-4">Event Activity — Last 52 Weeks</h3>
           <div className="overflow-x-auto">
             <Heatmap weeks={weeks} />
           </div>
         </div>
         <div className="card p-5">
-          <h3 className="text-sm font-medium text-gray-300 mb-1">Last 30 Days</h3>
-          <p className="text-[11px] text-gray-600 mb-4">Daily event count</p>
+          <h3 className="text-sm font-medium text-white/90 mb-1">Last 30 Days</h3>
+          <p className="text-[11px] text-white0/30 mb-4">Daily event count</p>
           <Sparkline data={last30} />
-          <div className="flex justify-between text-[11px] text-gray-600 mt-2">
+          <div className="flex justify-between text-[11px] text-white0/30 mt-2">
             <span>{last30[0]?.date?.slice(5)}</span>
             <span>{last30[last30.length - 1]?.date?.slice(5)}</span>
           </div>
           <div className="mt-4 pt-4 border-t border-border space-y-1">
             <div className="flex justify-between text-xs">
-              <span className="text-gray-500">Peak day</span>
-              <span className="text-gray-300 font-mono">
+              <span className="text-white0/40">Peak day</span>
+              <span className="text-white/90 font-mono">
                 <Tip raw={Math.max(...last30.map((d) => d.count)).toLocaleString()}>
                   {fmt(Math.max(...last30.map((d) => d.count)))}
                 </Tip>{" "}
@@ -653,8 +653,8 @@ export function Analytics() {
               </span>
             </div>
             <div className="flex justify-between text-xs">
-              <span className="text-gray-500">Total (30d)</span>
-              <span className="text-gray-300 font-mono">
+              <span className="text-white0/40">Total (30d)</span>
+              <span className="text-white/90 font-mono">
                 <Tip raw={last30.reduce((s, d) => s + d.count, 0).toLocaleString()}>
                   {fmt(last30.reduce((s, d) => s + d.count, 0))}
                 </Tip>{" "}
@@ -681,7 +681,7 @@ export function Analytics() {
               className={`px-4 py-1.5 text-xs font-medium rounded-md transition-colors ${
                 activeTab === key
                   ? "bg-surface-4 text-gray-200"
-                  : "text-gray-500 hover:text-gray-300"
+                  : "text-white0/40 hover:text-white/90"
               }`}
             >
               {label}
@@ -693,7 +693,7 @@ export function Analytics() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Token bars */}
             <div className="card p-5">
-              <h3 className="text-sm font-medium text-gray-300 mb-5">Token Distribution</h3>
+              <h3 className="text-sm font-medium text-white/90 mb-5">Token Distribution</h3>
               <div className="space-y-4">
                 {[
                   { label: "Input", value: data?.tokens.total_input ?? 0, color: "bg-blue-400" },
@@ -723,13 +723,13 @@ export function Analytics() {
                 ))}
               </div>
               <div className="mt-6 pt-4 border-t border-border space-y-1.5">
-                <div className="flex justify-between text-xs text-gray-500">
+                <div className="flex justify-between text-xs text-white0/40">
                   <span>Total tokens</span>
                   <Tip raw={totalTokens.toLocaleString()}>
-                    <span className="text-gray-300 font-mono">{fmt(totalTokens)}</span>
+                    <span className="text-white/90 font-mono">{fmt(totalTokens)}</span>
                   </Tip>
                 </div>
-                <div className="flex justify-between text-xs text-gray-500">
+                <div className="flex justify-between text-xs text-white0/40">
                   <span>Cache efficiency</span>
                   <span className="text-violet-400 font-mono">{cacheHitPct}%</span>
                 </div>
@@ -738,7 +738,7 @@ export function Analytics() {
 
             {/* Token summary */}
             <div className="card p-5">
-              <h3 className="text-sm font-medium text-gray-300 mb-5">Token Breakdown</h3>
+              <h3 className="text-sm font-medium text-white/90 mb-5">Token Breakdown</h3>
               <div className="space-y-3">
                 {[
                   { label: "Input", value: data?.tokens.total_input ?? 0, color: "text-blue-400" },
@@ -763,7 +763,7 @@ export function Analytics() {
                     key={label}
                     className="flex justify-between items-center py-2 border-b border-border last:border-0"
                   >
-                    <span className="text-xs text-gray-400">{label}</span>
+                    <span className="text-xs text-white/90">{label}</span>
                     <span className={`text-sm font-mono font-medium ${color}`}>
                       {value.toLocaleString()}
                     </span>
@@ -771,7 +771,7 @@ export function Analytics() {
                 ))}
               </div>
               {totalTokens === 0 && (
-                <p className="text-[11px] text-gray-600 mt-4">
+                <p className="text-[11px] text-white0/30 mt-4">
                   Token data captured from Claude Code Stop events.
                 </p>
               )}
@@ -779,7 +779,7 @@ export function Analytics() {
 
             {/* Cost by model */}
             <div className="card p-5">
-              <h3 className="text-sm font-medium text-gray-300 mb-5">Cost by Model</h3>
+              <h3 className="text-sm font-medium text-white/90 mb-5">Cost by Model</h3>
               {costData && costData.breakdown.length > 0 ? (
                 <>
                   <DonutChart
@@ -800,14 +800,14 @@ export function Analytics() {
                       .filter((b) => b.cost > 0)
                       .map((b) => (
                         <div key={b.model} className="flex justify-between text-xs">
-                          <span className="text-gray-400 font-mono truncate">{b.model}</span>
+                          <span className="text-white/90 font-mono truncate">{b.model}</span>
                           <span className="text-emerald-400 font-mono font-medium ml-2">
                             <Tip raw={fmtCostFull(b.cost)}>{fmtCost(b.cost)}</Tip>
                           </span>
                         </div>
                       ))}
                     <div className="flex justify-between text-xs pt-2 border-t border-border">
-                      <span className="text-gray-300 font-medium">Total</span>
+                      <span className="text-white/90 font-medium">Total</span>
                       <span className="text-emerald-400 font-mono font-semibold">
                         <Tip raw={fmtCostFull(costData.total_cost)}>
                           {fmtCost(costData.total_cost)}
@@ -817,7 +817,7 @@ export function Analytics() {
                   </div>
                 </>
               ) : (
-                <p className="text-sm text-gray-500">No cost data yet.</p>
+                <p className="text-sm text-white0/40">No cost data yet.</p>
               )}
             </div>
           </div>
@@ -827,9 +827,9 @@ export function Analytics() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Agent type distribution */}
             <div className="card p-5">
-              <h3 className="text-sm font-medium text-gray-300 mb-5">Subagent Types</h3>
+              <h3 className="text-sm font-medium text-white/90 mb-5">Subagent Types</h3>
               {(data?.agent_types ?? []).length === 0 ? (
-                <p className="text-sm text-gray-500">No subagent data yet.</p>
+                <p className="text-sm text-white0/40">No subagent data yet.</p>
               ) : (
                 <div className="space-y-3">
                   {(data?.agent_types ?? []).slice(0, 10).map(({ subagent_type, count }) => (
@@ -847,13 +847,13 @@ export function Analytics() {
 
             {/* Agent status donut */}
             <div className="card p-5">
-              <h3 className="text-sm font-medium text-gray-300 mb-5">Agent Status</h3>
+              <h3 className="text-sm font-medium text-white/90 mb-5">Agent Status</h3>
               <DonutChart segments={agentStatusSegments} />
               <div className="mt-4 pt-4 border-t border-border space-y-1.5">
-                <div className="flex justify-between text-xs text-gray-500">
+                <div className="flex justify-between text-xs text-white0/40">
                   <span>Total agents</span>
                   <Tip raw={(data?.overview.total_agents ?? 0).toLocaleString()}>
-                    <span className="text-gray-300 font-mono">
+                    <span className="text-white/90 font-mono">
                       {fmt(data?.overview.total_agents ?? 0)}
                     </span>
                   </Tip>
@@ -861,7 +861,7 @@ export function Analytics() {
                 {agentStatusSegments.map((s) => (
                   <div
                     key={s.label}
-                    className="flex items-center justify-between text-xs text-gray-500"
+                    className="flex items-center justify-between text-xs text-white0/40"
                   >
                     <span className="flex items-center gap-1.5">
                       <span
@@ -871,7 +871,7 @@ export function Analytics() {
                       {s.label}
                     </span>
                     <Tip raw={s.value.toLocaleString()}>
-                      <span className="text-gray-400 font-mono">{fmt(s.value)}</span>
+                      <span className="text-white/90 font-mono">{fmt(s.value)}</span>
                     </Tip>
                   </div>
                 ))}
@@ -880,9 +880,9 @@ export function Analytics() {
 
             {/* Event type breakdown */}
             <div className="card p-5">
-              <h3 className="text-sm font-medium text-gray-300 mb-5">Event Types</h3>
+              <h3 className="text-sm font-medium text-white/90 mb-5">Event Types</h3>
               {(data?.event_types ?? []).length === 0 ? (
-                <p className="text-sm text-gray-500">No event data yet.</p>
+                <p className="text-sm text-white0/40">No event data yet.</p>
               ) : (
                 <div className="space-y-3">
                   {(data?.event_types ?? []).map(({ event_type, count }) => (
@@ -904,9 +904,9 @@ export function Analytics() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Top tools */}
             <div className="card p-5">
-              <h3 className="text-sm font-medium text-gray-300 mb-5">Tool Usage</h3>
+              <h3 className="text-sm font-medium text-white/90 mb-5">Tool Usage</h3>
               {(data?.tool_usage ?? []).length === 0 ? (
-                <p className="text-sm text-gray-500">No tool usage data yet.</p>
+                <p className="text-sm text-white0/40">No tool usage data yet.</p>
               ) : (
                 <div className="space-y-3">
                   {(data?.tool_usage ?? []).slice(0, 12).map(({ tool_name, count }) => (
@@ -924,13 +924,13 @@ export function Analytics() {
 
             {/* Session outcomes donut */}
             <div className="card p-5">
-              <h3 className="text-sm font-medium text-gray-300 mb-5">Session Outcomes</h3>
+              <h3 className="text-sm font-medium text-white/90 mb-5">Session Outcomes</h3>
               <DonutChart segments={sessionOutcomeSegments} />
               <div className="mt-4 pt-4 border-t border-border space-y-1.5">
-                <div className="flex justify-between text-xs text-gray-500">
+                <div className="flex justify-between text-xs text-white0/40">
                   <span>Total sessions</span>
                   <Tip raw={(data?.overview.total_sessions ?? 0).toLocaleString()}>
-                    <span className="text-gray-300 font-mono">
+                    <span className="text-white/90 font-mono">
                       {fmt(data?.overview.total_sessions ?? 0)}
                     </span>
                   </Tip>
@@ -938,7 +938,7 @@ export function Analytics() {
                 {sessionOutcomeSegments.map((s) => (
                   <div
                     key={s.label}
-                    className="flex items-center justify-between text-xs text-gray-500"
+                    className="flex items-center justify-between text-xs text-white0/40"
                   >
                     <span className="flex items-center gap-1.5">
                       <span
@@ -948,7 +948,7 @@ export function Analytics() {
                       {s.label}
                     </span>
                     <Tip raw={s.value.toLocaleString()}>
-                      <span className="text-gray-400 font-mono">{fmt(s.value)}</span>
+                      <span className="text-white/90 font-mono">{fmt(s.value)}</span>
                     </Tip>
                   </div>
                 ))}
@@ -957,9 +957,9 @@ export function Analytics() {
 
             {/* Daily session trends */}
             <div className="card p-5">
-              <h3 className="text-sm font-medium text-gray-300 mb-5">Daily Session Trends</h3>
+              <h3 className="text-sm font-medium text-white/90 mb-5">Daily Session Trends</h3>
               {dailySessionsLocal.length === 0 ? (
-                <p className="text-sm text-gray-500">No session trend data yet.</p>
+                <p className="text-sm text-white0/40">No session trend data yet.</p>
               ) : (
                 <>
                   <Sparkline data={dailySessionsLocal.slice(-30)} color="#6366f1" />
@@ -976,25 +976,25 @@ export function Analytics() {
                         );
                         return (
                           <div key={date} className="flex items-center gap-3">
-                            <span className="text-[11px] text-gray-500 font-mono w-20 flex-shrink-0">
+                            <span className="text-[11px] text-white0/40 font-mono w-20 flex-shrink-0">
                               {date.slice(5)}
                             </span>
                             <div className="flex-1 bg-surface-3 rounded-full h-1.5">
                               <div
-                                className="bg-accent h-1.5 rounded-full"
+                                className="bg-cyan-400 h-1.5 rounded-full"
                                 style={{
                                   width: `${Math.round((count / Math.max(maxD, 1)) * 100)}%`,
                                 }}
                               />
                             </div>
-                            <span className="text-[11px] text-gray-500 w-4 text-right">
+                            <span className="text-[11px] text-white0/40 w-4 text-right">
                               {count}
                             </span>
                           </div>
                         );
                       })}
                   </div>
-                  <p className="text-[11px] text-gray-600 mt-3">Last 7 days</p>
+                  <p className="text-[11px] text-white0/30 mt-3">Last 7 days</p>
                 </>
               )}
             </div>

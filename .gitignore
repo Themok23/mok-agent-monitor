@@ -11,3 +11,4 @@ client/tsconfig.tsbuildinfo
 .env
 .env.local
 data/
+.vercel

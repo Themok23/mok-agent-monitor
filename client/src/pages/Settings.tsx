@@ -148,8 +148,8 @@ function Toggle({
   return (
     <label className="flex items-center justify-between gap-3 cursor-pointer group">
       <div className="min-w-0">
-        <p className="text-sm text-gray-300 group-hover:text-gray-200 transition-colors">{label}</p>
-        {description && <p className="text-xs text-gray-500 mt-0.5">{description}</p>}
+        <p className="text-sm text-white/90 group-hover:text-white transition-colors">{label}</p>
+        {description && <p className="text-xs text-white0/40 mt-0.5">{description}</p>}
       </div>
       <button
         type="button"
@@ -459,7 +459,7 @@ export function Settings() {
           </button>
           <button
             onClick={cancelEdit}
-            className="p-1.5 rounded-md text-gray-400 hover:bg-surface-4 transition-colors"
+            className="p-1.5 rounded-md text-white/90 hover:bg-cyan-500/5 transition-colors"
             title="Cancel"
           >
             <X className="w-4 h-4" />
@@ -488,7 +488,7 @@ export function Settings() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64 text-gray-500">Loading settings...</div>
+      <div className="flex items-center justify-center h-64 text-white0/40">Loading settings...</div>
     );
   }
 
@@ -497,24 +497,24 @@ export function Settings() {
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-accent/15 flex items-center justify-center">
-            <SettingsIcon className="w-4.5 h-4.5 text-accent" />
+          <div className="w-9 h-9 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center">
+            <SettingsIcon className="w-4.5 h-4.5 text-cyan-400" />
           </div>
           <div>
-            <h1 className="text-lg font-semibold text-gray-100">Settings</h1>
-            <p className="text-xs text-gray-500">Manage pricing, notifications, data, and hooks</p>
+            <h1 className="text-lg font-semibold text-cyan-400" style={{ fontFamily: "'Orbitron', sans-serif" }}>Settings</h1>
+            <p className="text-xs text-white0/50">Manage pricing, notifications, data, and hooks</p>
           </div>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
           <a
             href={api.settings.exportData()}
             download
-            className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md border border-border text-gray-400 hover:text-gray-200 hover:border-gray-500 transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md border border-cyan-500/10 text-white/90 hover:text-white hover:border-gray-500 transition-colors"
           >
             <FileDown className="w-3.5 h-3.5" />
             Export Data
           </a>
-          <button onClick={load} className="btn-ghost">
+          <button onClick={load} className="btn-ghost text-cyan-400 hover:text-cyan-300">
             <RefreshCw className="w-4 h-4" /> Refresh
           </button>
         </div>
@@ -528,8 +528,8 @@ export function Settings() {
               <DollarSign className="w-6 h-6 text-emerald-400" />
             </div>
             <div>
-              <p className="text-sm text-gray-500">Total Estimated Cost</p>
-              <p className="text-2xl font-semibold text-gray-100">
+              <p className="text-sm text-white0/40">Total Estimated Cost</p>
+              <p className="text-2xl font-semibold text-white">
                 <Tip
                   raw={
                     totalCost !== null
@@ -542,7 +542,7 @@ export function Settings() {
               </p>
             </div>
           </div>
-          <div className="text-right text-xs text-gray-500">
+          <div className="text-right text-xs text-white0/40">
             <p>Across all tracked sessions</p>
             <p>Based on per-model token usage</p>
           </div>
@@ -553,12 +553,12 @@ export function Settings() {
       <section>
         <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
           <div>
-            <h3 className="text-sm font-medium text-gray-300 flex items-center gap-2">
-              <DollarSign className="w-4 h-4 text-gray-500" />
+            <h3 className="text-sm font-medium text-white/90 flex items-center gap-2">
+              <DollarSign className="w-4 h-4 text-white0/40" />
               Model Pricing
             </h3>
-            <p className="text-xs text-gray-500 mt-0.5">
-              Rates per million tokens (USD). Use <code className="text-gray-400">%</code> as
+            <p className="text-xs text-white0/40 mt-0.5">
+              Rates per million tokens (USD). Use <code className="text-white/90">%</code> as
               wildcard in patterns.
             </p>
           </div>
@@ -573,7 +573,7 @@ export function Settings() {
               className={`text-xs px-3 py-1.5 rounded-md transition-colors disabled:opacity-50 ${
                 confirmAction === "reset-pricing"
                   ? "bg-amber-500/20 text-amber-400 border border-amber-500/30"
-                  : "text-gray-400 hover:text-gray-300 hover:bg-surface-4"
+                  : "text-white/90 hover:text-white/90 hover:bg-cyan-500/5"
               }`}
             >
               <RotateCcw className="w-3 h-3 inline mr-1" />
@@ -600,31 +600,31 @@ export function Settings() {
         <div className="card overflow-x-auto mt-4">
           <table className="w-full min-w-[700px]">
             <thead>
-              <tr className="border-b border-border text-left">
-                <th className="px-4 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
+              <tr className="border-b border-cyan-500/10 text-left">
+                <th className="px-4 py-3 text-[11px] font-semibold text-white0/40 uppercase tracking-wider">
                   Pattern
                 </th>
-                <th className="px-4 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
+                <th className="px-4 py-3 text-[11px] font-semibold text-white0/40 uppercase tracking-wider">
                   Display Name
                 </th>
-                <th className="px-4 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wider text-right">
+                <th className="px-4 py-3 text-[11px] font-semibold text-white0/40 uppercase tracking-wider text-right">
                   Input
                 </th>
-                <th className="px-4 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wider text-right">
+                <th className="px-4 py-3 text-[11px] font-semibold text-white0/40 uppercase tracking-wider text-right">
                   Output
                 </th>
-                <th className="px-4 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wider text-right">
+                <th className="px-4 py-3 text-[11px] font-semibold text-white0/40 uppercase tracking-wider text-right">
                   Cache Read
                 </th>
-                <th className="px-4 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wider text-right">
+                <th className="px-4 py-3 text-[11px] font-semibold text-white0/40 uppercase tracking-wider text-right">
                   Cache Write
                 </th>
-                <th className="w-24 px-4 py-3 text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
+                <th className="w-24 px-4 py-3 text-[11px] font-semibold text-white0/40 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-border">
+            <tbody className="divide-y divide-cyan-500/10">
               {pricing.map((rule) =>
                 editingPattern === rule.model_pattern ? (
                   <tr key={rule.model_pattern} className="bg-surface-3">
@@ -633,22 +633,22 @@ export function Settings() {
                 ) : (
                   <tr
                     key={rule.model_pattern}
-                    className="hover:bg-surface-4 transition-colors group"
+                    className="hover:bg-cyan-500/5 transition-colors group"
                   >
-                    <td className="px-4 py-3 text-sm font-mono text-gray-300">
+                    <td className="px-4 py-3 text-sm font-mono text-white/90">
                       {rule.model_pattern}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-300">{rule.display_name}</td>
-                    <td className="px-4 py-3 text-sm text-gray-400 text-right font-mono">
+                    <td className="px-4 py-3 text-sm text-white/90">{rule.display_name}</td>
+                    <td className="px-4 py-3 text-sm text-white/90 text-right font-mono">
                       ${rule.input_per_mtok}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-400 text-right font-mono">
+                    <td className="px-4 py-3 text-sm text-white/90 text-right font-mono">
                       ${rule.output_per_mtok}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-400 text-right font-mono">
+                    <td className="px-4 py-3 text-sm text-white/90 text-right font-mono">
                       ${rule.cache_read_per_mtok}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-400 text-right font-mono">
+                    <td className="px-4 py-3 text-sm text-white/90 text-right font-mono">
                       ${rule.cache_write_per_mtok}
                     </td>
                     <td className="px-4 py-3">
@@ -656,7 +656,7 @@ export function Settings() {
                         <button
                           onClick={() => startEdit(rule)}
                           disabled={isEditing}
-                          className="p-1.5 rounded-md text-gray-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors disabled:opacity-30"
+                          className="p-1.5 rounded-md text-white/90 hover:text-blue-400 hover:bg-blue-500/10 transition-colors disabled:opacity-30"
                           title="Edit"
                         >
                           <Pencil className="w-3.5 h-3.5" />
@@ -664,7 +664,7 @@ export function Settings() {
                         <button
                           onClick={() => deleteRule(rule.model_pattern)}
                           disabled={isEditing}
-                          className="p-1.5 rounded-md text-gray-400 hover:text-red-400 hover:bg-red-500/10 transition-colors disabled:opacity-30"
+                          className="p-1.5 rounded-md text-white/90 hover:text-red-400 hover:bg-red-500/10 transition-colors disabled:opacity-30"
                           title="Delete"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -680,17 +680,17 @@ export function Settings() {
         </div>
 
         {lastUpdated && (
-          <p className="text-xs text-gray-600 mt-3">Last updated: {formatTimestamp(lastUpdated)}</p>
+          <p className="text-xs text-white0/30 mt-3">Last updated: {formatTimestamp(lastUpdated)}</p>
         )}
       </section>
 
       {/* ─── HOOK CONFIGURATION ─── */}
       <section>
-        <h3 className="text-sm font-medium text-gray-300 flex items-center gap-2 mb-1">
-          <Plug className="w-4 h-4 text-gray-500" />
+        <h3 className="text-sm font-medium text-white/90 flex items-center gap-2 mb-1">
+          <Plug className="w-4 h-4 text-white0/40" />
           Hook Configuration
         </h3>
-        <p className="text-xs text-gray-500 mb-4">
+        <p className="text-xs text-white0/40 mb-4">
           Claude Code hooks forward events to the dashboard in real time.
         </p>
 
@@ -736,11 +736,11 @@ export function Settings() {
                     ) : (
                       <XCircle className="w-3 h-3 text-red-400 flex-shrink-0" />
                     )}
-                    <span className="text-gray-400 truncate">{hook}</span>
+                    <span className="text-white/90 truncate">{hook}</span>
                   </div>
                 ))}
               </div>
-              <p className="text-[11px] text-gray-600 font-mono truncate">{sysInfo.hooks.path}</p>
+              <p className="text-[11px] text-white0/30 font-mono truncate">{sysInfo.hooks.path}</p>
             </>
           )}
         </div>
@@ -748,11 +748,11 @@ export function Settings() {
 
       {/* ─── NOTIFICATIONS ─── */}
       <section>
-        <h3 className="text-sm font-medium text-gray-300 flex items-center gap-2 mb-1">
-          <Bell className="w-4 h-4 text-gray-500" />
+        <h3 className="text-sm font-medium text-white/90 flex items-center gap-2 mb-1">
+          <Bell className="w-4 h-4 text-white0/40" />
           Notifications
         </h3>
-        <p className="text-xs text-gray-500 mb-4">
+        <p className="text-xs text-white0/40 mb-4">
           Browser notifications for important events. Requires permission.
         </p>
 
@@ -764,13 +764,13 @@ export function Settings() {
                 className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${
                   notifPrefs.enabled
                     ? "bg-blue-500/10 border border-blue-500/20"
-                    : "bg-surface-2 border border-border"
+                    : "bg-surface-2 border border-cyan-500/10"
                 }`}
               >
                 {notifPrefs.enabled ? (
                   <BellRing className="w-5 h-5 text-blue-400" />
                 ) : (
-                  <BellOff className="w-5 h-5 text-gray-500" />
+                  <BellOff className="w-5 h-5 text-white0/40" />
                 )}
               </div>
               <Toggle
@@ -813,8 +813,8 @@ export function Settings() {
 
           {/* Event toggles */}
           {notifPrefs.enabled && (
-            <div className="space-y-3 pt-4 border-t border-border">
-              <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold">
+            <div className="space-y-3 pt-4 border-t border-cyan-500/10">
+              <p className="text-xs text-white0/40 uppercase tracking-wider font-semibold">
                 Notify me when...
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -853,7 +853,7 @@ export function Settings() {
               </div>
 
               {/* Test notification */}
-              <div className="pt-3 border-t border-border">
+              <div className="pt-3 border-t border-cyan-500/10">
                 <button
                   onClick={() => {
                     if ("Notification" in window && Notification.permission === "granted") {
@@ -863,7 +863,7 @@ export function Settings() {
                       });
                     }
                   }}
-                  className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md text-gray-400 hover:text-gray-200 hover:bg-surface-4 border border-border transition-colors"
+                  className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md text-white/90 hover:text-white hover:bg-cyan-500/5 border border-cyan-500/10 transition-colors"
                 >
                   <Zap className="w-3 h-3" />
                   Send Test Notification
@@ -873,7 +873,7 @@ export function Settings() {
           )}
 
           {!notifPrefs.enabled && (
-            <div className="flex items-center gap-2 text-xs text-gray-500">
+            <div className="flex items-center gap-2 text-xs text-white0/40">
               <BellOff className="w-3.5 h-3.5" />
               Notifications are disabled — enable to get alerts for session events
             </div>
@@ -883,21 +883,21 @@ export function Settings() {
 
       {/* ─── DATA MANAGEMENT ─── */}
       <section>
-        <h3 className="text-sm font-medium text-gray-300 flex items-center gap-2 mb-1">
-          <Database className="w-4 h-4 text-gray-500" />
+        <h3 className="text-sm font-medium text-white/90 flex items-center gap-2 mb-1">
+          <Database className="w-4 h-4 text-white0/40" />
           Data Management
         </h3>
-        <p className="text-xs text-gray-500 mb-4">Database info, import/export, and cleanup.</p>
+        <p className="text-xs text-white0/40 mb-4">Database info, import/export, and cleanup.</p>
 
         <div className="space-y-4">
           {/* DB stats grid */}
           <div className="card p-5 space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold flex-shrink-0">
+              <p className="text-xs text-white0/40 uppercase tracking-wider font-semibold flex-shrink-0">
                 Database Overview
               </p>
               {sysInfo && (
-                <div className="flex items-center gap-1.5 text-[11px] text-gray-600 font-mono bg-surface-2 px-2.5 py-1 rounded-md min-w-0">
+                <div className="flex items-center gap-1.5 text-[11px] text-white0/30 font-mono bg-surface-2 px-2.5 py-1 rounded-md min-w-0">
                   <HardDrive className="w-3 h-3 flex-shrink-0" />
                   <span className="truncate">{sysInfo.db.path}</span>
                 </div>
@@ -934,12 +934,12 @@ export function Settings() {
                       className={`bg-surface-2 rounded-lg px-3 py-3 border-l-2 ${tableColors[table] || "border-gray-500/20"}`}
                     >
                       <div className="flex items-center gap-2 mb-1.5">
-                        {tableIcons[table] || <Database className="w-4 h-4 text-gray-500" />}
-                        <p className="text-[11px] text-gray-500 uppercase tracking-wider">
+                        {tableIcons[table] || <Database className="w-4 h-4 text-white0/40" />}
+                        <p className="text-[11px] text-white0/40 uppercase tracking-wider">
                           {tableLabels[table] || table.replace(/_/g, " ")}
                         </p>
                       </div>
-                      <p className="text-xl font-semibold text-gray-200">
+                      <p className="text-xl font-semibold text-white">
                         <Tip raw={count.toLocaleString()}>{fmt(count)}</Tip>
                       </p>
                     </div>
@@ -948,15 +948,15 @@ export function Settings() {
                 <div className="bg-surface-2 rounded-lg px-3 py-3 border-l-2 border-indigo-500/20">
                   <div className="flex items-center gap-2 mb-1.5">
                     <HardDrive className="w-4 h-4 text-indigo-400" />
-                    <p className="text-[11px] text-gray-500 uppercase tracking-wider">DB Size</p>
+                    <p className="text-[11px] text-white0/40 uppercase tracking-wider">DB Size</p>
                   </div>
-                  <p className="text-xl font-semibold text-gray-200">
+                  <p className="text-xl font-semibold text-white">
                     {formatBytes(sysInfo.db.size)}
                   </p>
                 </div>
               </div>
             ) : (
-              <p className="text-xs text-gray-500">Loading database info...</p>
+              <p className="text-xs text-white0/40">Loading database info...</p>
             )}
           </div>
 
@@ -967,14 +967,14 @@ export function Settings() {
                 <Eraser className="w-4 h-4 text-amber-400" />
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-300">Session Cleanup</p>
-                <p className="text-xs text-gray-500">Abandon stale sessions and purge old data</p>
+                <p className="text-sm font-medium text-white/90">Session Cleanup</p>
+                <p className="text-xs text-white0/40">Abandon stale sessions and purge old data</p>
               </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="bg-surface-2 rounded-lg px-4 py-3">
-                <label className="text-xs text-gray-400 block mb-2">
+                <label className="text-xs text-white/90 block mb-2">
                   Abandon stale active sessions older than
                 </label>
                 <div className="flex items-center gap-2">
@@ -985,11 +985,11 @@ export function Settings() {
                     onChange={(e) => setAbandonHours(e.target.value)}
                     className="input w-20 text-sm text-right font-mono"
                   />
-                  <span className="text-xs text-gray-500">hours</span>
+                  <span className="text-xs text-white0/40">hours</span>
                 </div>
               </div>
               <div className="bg-surface-2 rounded-lg px-4 py-3">
-                <label className="text-xs text-gray-400 block mb-2">
+                <label className="text-xs text-white/90 block mb-2">
                   Purge completed/errored sessions older than
                 </label>
                 <div className="flex items-center gap-2">
@@ -1000,7 +1000,7 @@ export function Settings() {
                     onChange={(e) => setPurgeDays(e.target.value)}
                     className="input w-20 text-sm text-right font-mono"
                   />
-                  <span className="text-xs text-gray-500">days</span>
+                  <span className="text-xs text-white0/40">days</span>
                 </div>
               </div>
             </div>
@@ -1013,7 +1013,7 @@ export function Settings() {
               className={`text-xs px-3 py-1.5 rounded-md transition-colors disabled:opacity-50 ${
                 confirmAction === "cleanup"
                   ? "bg-amber-500/20 text-amber-400 border border-amber-500/30"
-                  : "text-gray-400 hover:text-gray-300 hover:bg-surface-4 border border-border"
+                  : "text-white/90 hover:text-white/90 hover:bg-cyan-500/5 border border-cyan-500/10"
               }`}
             >
               {actionLoading === "cleanup" ? (
@@ -1035,7 +1035,7 @@ export function Settings() {
               </div>
               <div>
                 <p className="text-sm font-medium text-red-400">Danger Zone</p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-white0/40">
                   Irreversible actions that delete data permanently
                 </p>
               </div>
@@ -1059,7 +1059,7 @@ export function Settings() {
                   </button>
                   <button
                     onClick={() => setConfirmAction(null)}
-                    className="text-xs px-3 py-1.5 rounded-md text-gray-400 hover:bg-surface-4 transition-colors"
+                    className="text-xs px-3 py-1.5 rounded-md text-white/90 hover:bg-cyan-500/5 transition-colors"
                   >
                     Cancel
                   </button>
@@ -1083,11 +1083,11 @@ export function Settings() {
 
       {/* ─── ABOUT ─── */}
       <section>
-        <h3 className="text-sm font-medium text-gray-300 flex items-center gap-2 mb-1">
-          <Server className="w-4 h-4 text-gray-500" />
+        <h3 className="text-sm font-medium text-white/90 flex items-center gap-2 mb-1">
+          <Server className="w-4 h-4 text-white0/40" />
           About
         </h3>
-        <p className="text-xs text-gray-500 mb-4">Server runtime information.</p>
+        <p className="text-xs text-white0/40 mb-4">Server runtime information.</p>
 
         {sysInfo ? (
           <div className="card p-5">
@@ -1095,41 +1095,41 @@ export function Settings() {
               <div className="bg-surface-2 rounded-lg px-4 py-3">
                 <div className="flex items-center gap-2 mb-1.5">
                   <Clock className="w-4 h-4 text-blue-400" />
-                  <p className="text-[11px] text-gray-500 uppercase tracking-wider">Uptime</p>
+                  <p className="text-[11px] text-white0/40 uppercase tracking-wider">Uptime</p>
                 </div>
-                <p className="text-sm font-semibold text-gray-200">
+                <p className="text-sm font-semibold text-white">
                   {formatUptime(sysInfo.server.uptime)}
                 </p>
               </div>
               <div className="bg-surface-2 rounded-lg px-4 py-3">
                 <div className="flex items-center gap-2 mb-1.5">
                   <Cpu className="w-4 h-4 text-emerald-400" />
-                  <p className="text-[11px] text-gray-500 uppercase tracking-wider">Node.js</p>
+                  <p className="text-[11px] text-white0/40 uppercase tracking-wider">Node.js</p>
                 </div>
-                <p className="text-sm font-semibold text-gray-200 font-mono">
+                <p className="text-sm font-semibold text-white font-mono">
                   {sysInfo.server.node_version}
                 </p>
               </div>
               <div className="bg-surface-2 rounded-lg px-4 py-3">
                 <div className="flex items-center gap-2 mb-1.5">
                   <Globe className="w-4 h-4 text-violet-400" />
-                  <p className="text-[11px] text-gray-500 uppercase tracking-wider">Platform</p>
+                  <p className="text-[11px] text-white0/40 uppercase tracking-wider">Platform</p>
                 </div>
-                <p className="text-sm font-semibold text-gray-200">{sysInfo.server.platform}</p>
+                <p className="text-sm font-semibold text-white">{sysInfo.server.platform}</p>
               </div>
               <div className="bg-surface-2 rounded-lg px-4 py-3">
                 <div className="flex items-center gap-2 mb-1.5">
                   <Wifi className="w-4 h-4 text-amber-400" />
-                  <p className="text-[11px] text-gray-500 uppercase tracking-wider">WS Clients</p>
+                  <p className="text-[11px] text-white0/40 uppercase tracking-wider">WS Clients</p>
                 </div>
-                <p className="text-sm font-semibold text-gray-200">
+                <p className="text-sm font-semibold text-white">
                   {sysInfo.server.ws_connections}
                 </p>
               </div>
             </div>
           </div>
         ) : (
-          <p className="text-xs text-gray-500">Loading server info...</p>
+          <p className="text-xs text-white0/40">Loading server info...</p>
         )}
       </section>
     </div>

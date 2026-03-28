@@ -34,29 +34,35 @@ export function Dashboard() {
 
   const load = useCallback(async () => {
     try {
+      // Use individual catches so one failed endpoint doesn't kill everything
+      const safe = async <T,>(fn: () => Promise<T>, fallback: T): Promise<T> => {
+        try { return await fn(); } catch { return fallback; }
+      };
+
       const [statsRes, workingRes, connectedRes, idleRes, eventsRes, costRes] = await Promise.all([
-        api.stats.get(),
-        api.agents.list({ status: "working", limit: 20 }),
-        api.agents.list({ status: "connected", limit: 20 }),
-        api.agents.list({ status: "idle", limit: 20 }),
-        api.events.list({ limit: 15 }),
-        api.pricing.totalCost(),
+        safe(() => api.stats.get(), null),
+        safe(() => api.agents.list({ status: "working", limit: 20 }), { agents: [] }),
+        safe(() => api.agents.list({ status: "connected", limit: 20 }), { agents: [] }),
+        safe(() => api.agents.list({ status: "idle", limit: 20 }), { agents: [] }),
+        safe(() => api.events.list({ limit: 15 }), { events: [] }),
+        safe(() => api.pricing.totalCost(), { total_cost: 0, breakdown: [] }),
       ]);
-      setStats(statsRes);
-      const active = [...workingRes.agents, ...connectedRes.agents, ...idleRes.agents];
+
+      if (statsRes) setStats(statsRes);
+      const active = [...(workingRes.agents || []), ...(connectedRes.agents || []), ...(idleRes.agents || [])];
       setActiveAgents(active);
-      setRecentEvents(eventsRes.events);
-      setTotalCost(costRes.total_cost);
+      setRecentEvents(eventsRes.events || []);
+      setTotalCost(costRes.total_cost ?? 0);
       setError(null);
 
-      // Fetch all subagents for each active main agent's session
+      // Fetch subagents
       const activeSessionIds = [
         ...new Set(active.filter((a) => a.type === "main").map((a) => a.session_id)),
       ];
       const subagentResults = await Promise.all(
-        activeSessionIds.map((sid) => api.agents.list({ session_id: sid, limit: 100 }))
+        activeSessionIds.map((sid) => safe(() => api.agents.list({ session_id: sid, limit: 100 }), { agents: [] }))
       );
-      const subs = subagentResults.flatMap((r) => r.agents).filter((a) => a.type === "subagent");
+      const subs = subagentResults.flatMap((r) => r.agents || []).filter((a) => a.type === "subagent");
       setAllSubagents(subs);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load data");
@@ -101,91 +107,62 @@ export function Dashboard() {
   if (error) {
     return (
       <div className="text-center py-20">
-        <p className="text-red-400 mb-2">Failed to connect to server</p>
-        <p className="text-sm text-gray-500">{error}</p>
-        <button onClick={load} className="btn-primary mt-4">
-          Retry
-        </button>
+        <div className="inline-block p-6 rounded-xl border-2 border-red-500/50 bg-red-500/5">
+          <p className="text-red-400 mb-2 font-semibold">Failed to connect to server</p>
+          <p className="text-sm text-red-500/70">{error}</p>
+          <button
+            onClick={load}
+            className="mt-4 px-4 py-2 rounded-lg border border-red-500/30 text-red-400 hover:bg-red-500/10 hover:border-red-500/50 transition-all duration-200"
+          >
+            Retry
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="space-y-8 animate-fade-in">
+      {/* Cyberpunk Header */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-accent/15 flex items-center justify-center">
-            <LayoutDashboard className="w-4.5 h-4.5 text-accent" />
+          <div className="w-9 h-9 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center">
+            <LayoutDashboard className="w-4.5 h-4.5 text-cyan-400" />
           </div>
           <div>
-            <h1 className="text-lg font-semibold text-gray-100">Dashboard</h1>
-            <p className="text-xs text-gray-500">
-              Real-time overview of Claude Code agent activity
-            </p>
+            <h1 className="text-lg font-semibold text-cyan-400" style={{ fontFamily: "'Orbitron', sans-serif" }}>
+              MOK HQ
+            </h1>
+            <p className="text-xs text-cyan-500/50">Neural Command Center</p>
           </div>
         </div>
-        <button onClick={load} className="btn-ghost flex-shrink-0">
+        <button
+          onClick={load}
+          className="flex items-center gap-2 px-3 py-2 rounded-lg border border-cyan-500/20 text-cyan-400 hover:bg-cyan-500/10 hover:border-cyan-500/30 transition-all duration-200"
+        >
           <RefreshCw className="w-4 h-4" /> Refresh
         </button>
       </div>
 
-      {/* Stats grid — 2 rows of 3 avoids the 6-column squeeze */}
+      {/* Stats grid */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-        <StatCard
-          label="Total Sessions"
-          value={stats ? fmt(stats.total_sessions) : "-"}
-          raw={stats ? stats.total_sessions.toLocaleString() : undefined}
-          icon={FolderOpen}
-          trend={stats ? `${stats.active_sessions} active` : undefined}
-        />
-        <StatCard
-          label="Active Agents"
-          value={stats?.active_agents ?? "-"}
-          icon={Bot}
-          accentColor="text-emerald-400"
-        />
-        <StatCard
-          label="Active Subagents"
-          value={
-            allSubagents.filter((a) => a.status === "working" || a.status === "connected").length
-          }
-          icon={GitBranch}
-          accentColor="text-violet-400"
-          trend={`${allSubagents.length} total`}
-        />
-        <StatCard
-          label="Events Today"
-          value={stats ? fmt(stats.events_today) : "-"}
-          raw={stats ? stats.events_today.toLocaleString() : undefined}
-          icon={Zap}
-          accentColor="text-yellow-400"
-        />
-        <StatCard
-          label="Total Events"
-          value={stats ? fmt(stats.total_events) : "-"}
-          raw={stats ? stats.total_events.toLocaleString() : undefined}
-          icon={Activity}
-          accentColor="text-violet-400"
-        />
-        <StatCard
-          label="Total Cost"
-          value={totalCost !== null ? fmtCost(totalCost) : "-"}
-          raw={
-            totalCost !== null
-              ? `$${totalCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-              : undefined
-          }
-          icon={DollarSign}
-          accentColor="text-emerald-400"
-        />
+        <StatCard label="Total Sessions" value={stats ? fmt(stats.total_sessions) : "-"} raw={stats ? stats.total_sessions.toLocaleString() : undefined} icon={FolderOpen} trend={stats ? `${stats.active_sessions} active` : undefined} />
+        <StatCard label="Active Agents" value={stats?.active_agents ?? "-"} icon={Bot} accentColor="text-emerald-400" />
+        <StatCard label="Active Subagents" value={allSubagents.filter((a) => a.status === "working" || a.status === "connected").length} icon={GitBranch} accentColor="text-violet-400" trend={`${allSubagents.length} total`} />
+        <StatCard label="Events Today" value={stats ? fmt(stats.events_today) : "-"} raw={stats ? stats.events_today.toLocaleString() : undefined} icon={Zap} accentColor="text-yellow-400" />
+        <StatCard label="Total Events" value={stats ? fmt(stats.total_events) : "-"} raw={stats ? stats.total_events.toLocaleString() : undefined} icon={Activity} accentColor="text-violet-400" />
+        <StatCard label="Total Cost" value={totalCost !== null ? fmtCost(totalCost) : "-"} icon={DollarSign} accentColor="text-emerald-400" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 min-w-0">
-        {/* Active agents */}
+        {/* Active agents with cyberpunk styling */}
         <div className="min-w-0 overflow-hidden">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-medium text-gray-300">Active Agents</h3>
-            <button onClick={() => navigate("/kanban")} className="btn-ghost text-xs">
+            <h3 className="text-sm font-medium text-cyan-300">Active Agents</h3>
+            <button
+              onClick={() => navigate("/kanban")}
+              className="flex items-center gap-1 text-xs text-cyan-400 hover:text-cyan-300 transition-colors"
+            >
               View Board <ArrowRight className="w-3 h-3" />
             </button>
           </div>
@@ -209,7 +186,7 @@ export function Dashboard() {
                   ).length;
 
                   return (
-                    <div key={main.id}>
+                    <div key={main.id} className="rounded-lg bg-[#0a0e1f] border border-cyan-500/10 p-2">
                       <div className="flex items-center gap-1 min-w-0">
                         {hasChildren && (
                           <button
@@ -221,7 +198,7 @@ export function Dashboard() {
                                 return next;
                               })
                             }
-                            className="p-1 text-gray-500 hover:text-gray-300 transition-colors flex-shrink-0"
+                            className="p-1 text-cyan-500/50 hover:text-cyan-400 transition-colors flex-shrink-0"
                           >
                             {isExpanded ? (
                               <ChevronDown className="w-4 h-4" />
@@ -236,10 +213,10 @@ export function Dashboard() {
                       </div>
 
                       {hasChildren && isExpanded && (
-                        <div className="ml-6 mt-1 space-y-1 border-l-2 border-violet-500/20 pl-3">
+                        <div className="ml-6 mt-1 space-y-1 border-l-2 border-cyan-500/20 pl-3">
                           {children.map((sub) => (
                             <div key={sub.id} className="flex items-center gap-2">
-                              <GitBranch className="w-3 h-3 text-violet-400 flex-shrink-0" />
+                              <GitBranch className="w-3 h-3 text-cyan-400 flex-shrink-0" />
                               <div className="flex-1">
                                 <AgentCard agent={sub} />
                               </div>
@@ -251,7 +228,7 @@ export function Dashboard() {
                       {hasChildren && !isExpanded && (
                         <button
                           onClick={() => setExpandedAgents((prev) => new Set([...prev, main.id]))}
-                          className="ml-7 mt-1 text-[11px] text-violet-400 hover:text-violet-300 transition-colors"
+                          className="ml-7 mt-1 text-[11px] text-cyan-400 hover:text-cyan-300 transition-colors"
                         >
                           {children.length} subagent{children.length !== 1 ? "s" : ""}
                           {activeCount > 0 && (
@@ -266,7 +243,7 @@ export function Dashboard() {
               {activeAgents
                 .filter((a) => a.type === "subagent")
                 .map((agent) => (
-                  <div key={agent.id}>
+                  <div key={agent.id} className="rounded-lg bg-[#0a0e1f] border border-cyan-500/10 p-2">
                     <AgentCard agent={agent} />
                   </div>
                 ))}
@@ -274,11 +251,14 @@ export function Dashboard() {
           )}
         </div>
 
-        {/* Recent activity */}
+        {/* Recent activity with cyberpunk styling */}
         <div className="min-w-0 overflow-hidden">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-medium text-gray-300">Recent Activity</h3>
-            <button onClick={() => navigate("/activity")} className="btn-ghost text-xs">
+            <h3 className="text-sm font-medium text-cyan-300">Recent Activity</h3>
+            <button
+              onClick={() => navigate("/activity")}
+              className="flex items-center gap-1 text-xs text-cyan-400 hover:text-cyan-300 transition-colors"
+            >
               View All <ArrowRight className="w-3 h-3" />
             </button>
           </div>
@@ -289,11 +269,11 @@ export function Dashboard() {
               description="Events from Claude Code sessions will stream here in real-time."
             />
           ) : (
-            <div className="card divide-y divide-border">
+            <div className="rounded-lg bg-[#0a0e1f] border border-cyan-500/10 divide-y divide-cyan-500/10 overflow-hidden">
               {recentEvents.slice(0, 8).map((event, i) => (
                 <div
                   key={event.id ?? i}
-                  className="px-4 py-3 flex items-center gap-3 hover:bg-surface-4 transition-colors cursor-pointer"
+                  className="px-4 py-3 flex items-center gap-3 hover:bg-cyan-500/5 transition-colors cursor-pointer"
                   onClick={() => navigate(`/sessions/${event.session_id}`)}
                 >
                   <AgentStatusBadge
@@ -305,13 +285,13 @@ export function Dashboard() {
                           : "connected"
                     }
                   />
-                  <span className="text-sm text-gray-300 truncate flex-1">
+                  <span className="text-sm text-white truncate flex-1">
                     {event.summary || event.event_type}
                   </span>
                   {event.tool_name && (
-                    <span className="text-[11px] text-gray-500 font-mono">{event.tool_name}</span>
+                    <span className="text-[11px] text-cyan-500/50 font-mono">{event.tool_name}</span>
                   )}
-                  <span className="text-[11px] text-gray-600 flex-shrink-0">
+                  <span className="text-[11px] text-cyan-500/30 flex-shrink-0">
                     {timeAgo(event.created_at)}
                   </span>
                 </div>
