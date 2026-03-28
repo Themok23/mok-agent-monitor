@@ -9,12 +9,29 @@ const router = Router();
 // Shared cache instance — reused by periodic compaction scanner via router.transcriptCache
 const transcriptCache = new TranscriptCache();
 
+function deriveSessionName(data) {
+  // Priority: explicit session_name > cwd-based name > fallback
+  if (data.session_name) return data.session_name;
+  if (data.cwd) {
+    const parts = data.cwd.split("/").filter(Boolean);
+    // Cowork: /sessions/<slug>/mnt/<folder> -> folder name
+    const mntIdx = parts.indexOf("mnt");
+    if (mntIdx >= 0 && parts.length > mntIdx + 1) {
+      return parts.slice(mntIdx + 1).join("/");
+    }
+    // Regular: last 2 path segments
+    return parts.slice(-2).join("/");
+  }
+  return null;
+}
+
 function ensureSession(sessionId, data) {
   let session = stmts.getSession.get(sessionId);
   if (!session) {
+    const name = deriveSessionName(data) || `Session ${sessionId.slice(0, 8)}`;
     stmts.insertSession.run(
       sessionId,
-      data.session_name || `Session ${sessionId.slice(0, 8)}`,
+      name,
       "active",
       data.cwd || null,
       data.model || null,
@@ -25,11 +42,10 @@ function ensureSession(sessionId, data) {
 
     // Create main agent for new session
     const mainAgentId = `${sessionId}-main`;
-    const sessionLabel = session.name || `Session ${sessionId.slice(0, 8)}`;
     stmts.insertAgent.run(
       mainAgentId,
       sessionId,
-      `Main Agent — ${sessionLabel}`,
+      `Main Agent - ${name}`,
       "main",
       null,
       "connected",
@@ -38,6 +54,21 @@ function ensureSession(sessionId, data) {
       null
     );
     broadcast("agent_created", stmts.getAgent.get(mainAgentId));
+  } else if (data.cwd && (!session.name || session.name.startsWith("Session "))) {
+    // Update session name if we now have a better one from cwd
+    const betterName = deriveSessionName(data);
+    if (betterName) {
+      stmts.updateSession.run(betterName, null, null, null, sessionId);
+      // Also update main agent name
+      const mainAgentId = `${sessionId}-main`;
+      const mainAgent = stmts.getAgent.get(mainAgentId);
+      if (mainAgent) {
+        stmts.updateAgent.run(`Main Agent - ${betterName}`, null, null, null, null, null, mainAgentId);
+        broadcast("agent_updated", stmts.getAgent.get(mainAgentId));
+      }
+      session = stmts.getSession.get(sessionId);
+      broadcast("session_updated", session);
+    }
   }
   return session;
 }

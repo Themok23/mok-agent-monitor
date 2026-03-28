@@ -19,6 +19,20 @@ app.get("/api/health", (_req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString(), mode: "vercel" });
 });
 
+// Derive a readable session name from cwd path
+function deriveSessionName(data) {
+  if (data?.session_name) return data.session_name;
+  if (data?.cwd) {
+    const parts = data.cwd.split("/").filter(Boolean);
+    const mntIdx = parts.indexOf("mnt");
+    if (mntIdx >= 0 && parts.length > mntIdx + 1) {
+      return parts.slice(mntIdx + 1).join("/");
+    }
+    return parts.slice(-2).join("/");
+  }
+  return null;
+}
+
 // Hooks endpoint
 app.post("/api/hooks/event", hookAuthMiddleware, async (req, res) => {
   try {
@@ -29,16 +43,26 @@ app.post("/api/hooks/event", hookAuthMiddleware, async (req, res) => {
     const toolName = data?.tool_name || data?.toolName || null;
     const model = data?.model || null;
     const cwd = data?.cwd || null;
+    const sessionName = deriveSessionName(data) || `Session ${sessionId.slice(0, 8)}`;
 
     const existing = await neonDb.getSession(sessionId);
     if (!existing && sessionId !== "unknown") {
-      await neonDb.insertSession(sessionId, null, "active", cwd, model, null);
+      await neonDb.insertSession(sessionId, sessionName, "active", cwd, model, null);
       await neonDb.insertAgent(
-        `${sessionId}-main`, sessionId, "main", "main",
+        `${sessionId}-main`, sessionId, `Main Agent - ${sessionName}`, "main",
         null, "connected", null, null, null
       );
     } else if (existing && existing.status !== "active") {
       await neonDb.reactivateSession(sessionId);
+      // Update name if we have a better one
+      if (cwd && existing.name && existing.name.startsWith("Session ")) {
+        await neonDb.updateSession(sessionName, null, null, null, sessionId).catch(() => {});
+        await neonDb.updateAgent(`Main Agent - ${sessionName}`, null, null, null, null, null, `${sessionId}-main`).catch(() => {});
+      }
+    } else if (existing && cwd && existing.name && existing.name.startsWith("Session ")) {
+      // Existing active session but generic name - upgrade it
+      await neonDb.updateSession(sessionName, null, null, null, sessionId).catch(() => {});
+      await neonDb.updateAgent(`Main Agent - ${sessionName}`, null, null, null, null, null, `${sessionId}-main`).catch(() => {});
     }
 
     const agentId = data?.agent_id || `${sessionId}-main`;

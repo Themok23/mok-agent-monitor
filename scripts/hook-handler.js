@@ -51,7 +51,30 @@ process.stdin.on("end", () => {
   }
 
   const sessionId = parsedData?.session_id || parsedData?.sessionId || "unknown";
-  debugLog(`${hookType} session=${sessionId} tool=${parsedData?.tool_name || "-"}`);
+
+  // Enrich: derive a human-readable session name from cwd if not already set
+  if (parsedData?.cwd && !parsedData.session_name) {
+    const cwd = parsedData.cwd;
+    // For Cowork: /sessions/<slug>/mnt/<folder> -> extract folder name
+    // For Claude Code: /home/user/project -> extract project name
+    const parts = cwd.split("/").filter(Boolean);
+    // Try to find a meaningful folder name
+    const mntIdx = parts.indexOf("mnt");
+    if (mntIdx >= 0 && parts.length > mntIdx + 1) {
+      // Cowork session: use the mounted folder name
+      parsedData.session_name = parts.slice(mntIdx + 1).join("/");
+    } else {
+      // Regular Claude Code: use last 1-2 path segments
+      parsedData.session_name = parts.slice(-2).join("/");
+    }
+  }
+
+  // Also check for CLAUDE_CODE_IS_COWORK env var
+  if (process.env.CLAUDE_CODE_IS_COWORK === "1") {
+    parsedData._is_cowork = true;
+  }
+
+  debugLog(`${hookType} session=${sessionId} name=${parsedData?.session_name || "-"} tool=${parsedData?.tool_name || "-"}`);
 
   const payload = JSON.stringify({
     hook_type: hookType,
